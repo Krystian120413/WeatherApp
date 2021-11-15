@@ -2,7 +2,6 @@ package com.project.weatheraplication
 
 import android.annotation.SuppressLint
 import android.graphics.Color
-import android.graphics.RadialGradient
 import android.os.AsyncTask
 import android.os.Bundle
 import android.view.View
@@ -27,7 +26,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         WeatherTask().execute()
-
     }
 
     @SuppressLint("StaticFieldLeak")
@@ -42,10 +40,10 @@ class MainActivity : AppCompatActivity() {
         }
 
         override fun doInBackground(vararg params: String?): String? {
-            val response:String? = try{
+            val response:String? = try {
                 URL("https://api.openweathermap.org/data/2.5/weather?q=$city&units=metric&appid=$api").readText(Charsets.UTF_8)
 
-            }catch (e: Exception){
+            } catch (e: Exception) {
                 null
             }
             aqi = URL(aqiApi).readText(Charsets.UTF_8)
@@ -99,57 +97,11 @@ class MainActivity : AppCompatActivity() {
                 findViewById<TextView>(R.id.pressure).text = pressure
                 findViewById<TextView>(R.id.humidity).text = humidity
                 findViewById<TextView>(R.id.aqi).text = aqiLevel
-                val gd = GradientDrawable()
-                gd.gradientType = GradientDrawable.LINEAR_GRADIENT
-                gd.orientation = GradientDrawable.Orientation.BOTTOM_TOP
-                when (aqiLevel.toInt()) {
-                    in 0..50 -> {
-                        gd.colors = intArrayOf(
-                            Color.rgb(0, 153, 102),
-                            Color.rgb(0, 183, 102),
-                        )
-                    }
-                    in 51..100 -> {
-                        gd.colors = intArrayOf(
-                            Color.rgb(255, 222, 51),
-                            Color.rgb(255, 182, 51)
-                        )
-                        findViewById<TextView>(R.id.aqi).setTextColor(Color.BLACK)
-                        findViewById<TextView>(R.id.airtext).setTextColor(Color.BLACK)
-                        findViewById<ImageView>(R.id.airicon).setColorFilter(Color.BLACK)
-                    }
-                    in 101..150 -> {
-                        gd.colors = intArrayOf(
-                            Color.rgb(255, 153, 51),
-                            Color.rgb(255, 123, 81)
-                        )
-                        findViewById<TextView>(R.id.aqi).setTextColor(Color.BLACK)
-                        findViewById<TextView>(R.id.airtext).setTextColor(Color.BLACK)
-                        findViewById<ImageView>(R.id.airicon).setColorFilter(Color.BLACK)
-                    }
-                    in 151..200 -> {
-                        gd.colors = intArrayOf(
-                            Color.rgb(204, 0, 51),
-                            Color.rgb(194, 0, 91)
-                        )
-                    }
-                    in 201..300 -> {
-                        gd.colors = intArrayOf(
-                            Color.rgb(102, 0, 153),
-                            Color.rgb(42, 0, 123)
-                        )
-                    }
-                    else -> {
-                        gd.colors = intArrayOf(
-                            Color.rgb(126, 0, 35),
-                            Color.rgb(96, 0, 65)
-                        )
-                    }
-                }
-                findViewById<LinearLayout>(R.id.aqiinfo).background = gd
+
                 /* Views populated, Hiding the loader, Showing the main design */
                 findViewById<ProgressBar>(R.id.loader).visibility = View.GONE
                 findViewById<RelativeLayout>(R.id.mainContainer).visibility = View.VISIBLE
+                airQualityGradient(aqiLevel.toInt())
 
             } catch (e: Exception) {
                 findViewById<ProgressBar>(R.id.loader).visibility = View.GONE
@@ -157,5 +109,58 @@ class MainActivity : AppCompatActivity() {
             }
 
         }
+
+        private fun airQualityGradient(level: Int) {
+            val gd = GradientDrawable()
+            gd.gradientType = GradientDrawable.LINEAR_GRADIENT
+            gd.orientation = GradientDrawable.Orientation.BOTTOM_TOP
+
+            when (level) {
+                in 0..50 -> {
+                    gd.colors = intArrayOf(
+                        Color.rgb(0, 153, 102),
+                        Color.rgb(0, 183, 102),
+                    )
+                }
+                in 51..100 -> {
+                    gd.colors = intArrayOf(
+                        Color.rgb(255, 222, 51),
+                        Color.rgb(255, 182, 51)
+                    )
+                    findViewById<TextView>(R.id.aqi).setTextColor(Color.BLACK)
+                    findViewById<TextView>(R.id.airtext).setTextColor(Color.BLACK)
+                    findViewById<ImageView>(R.id.airicon).setColorFilter(Color.BLACK)
+                }
+                in 101..150 -> {
+                    gd.colors = intArrayOf(
+                        Color.rgb(255, 153, 51),
+                        Color.rgb(255, 123, 81)
+                    )
+                    findViewById<TextView>(R.id.aqi).setTextColor(Color.BLACK)
+                    findViewById<TextView>(R.id.airtext).setTextColor(Color.BLACK)
+                    findViewById<ImageView>(R.id.airicon).setColorFilter(Color.BLACK)
+                }
+                in 151..200 -> {
+                    gd.colors = intArrayOf(
+                        Color.rgb(204, 0, 51),
+                        Color.rgb(194, 0, 91)
+                    )
+                }
+                in 201..300 -> {
+                    gd.colors = intArrayOf(
+                        Color.rgb(102, 0, 153),
+                        Color.rgb(42, 0, 123)
+                    )
+                }
+                else -> {
+                    gd.colors = intArrayOf(
+                        Color.rgb(126, 0, 35),
+                        Color.rgb(96, 0, 65)
+                    )
+                }
+            }
+            findViewById<LinearLayout>(R.id.aqiinfo).background = gd
+        }
     }
+
 }

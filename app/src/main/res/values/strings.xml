@@ -1,3 +1,18 @@
 <resources>
     <string name="app_name">WeatherAplication</string>
+    <string name="sunrise">Sunrise</string>
+    <string name="city">RZESZÓW, PL</string>
+    <string name="pressure">Pressure</string>
+    <string name="wind">Wind</string>
+    <string name="sunset">Sunset</string>
+    <string name="air_quality">Air Quality</string>
+    <string name="humidity">Humidity</string>
+    <string name="aqi">0</string>
+    <string name="something_went_wrong">Something went wrong</string>
+    <string name="time">06:40 AM</string>
+    <string name="date">20 April 2012, 20:08 PM</string>
+    <string name="clear_sky">Clear Sky</string>
+    <string name="max_temp">Max Temp</string>
+    <string name="min_temp">Min Temp</string>
+    <string name="temp">29°C</string>
 </resources>
