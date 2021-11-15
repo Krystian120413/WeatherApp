@@ -10,6 +10,7 @@ import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.*
 import android.widget.*
+import android.content.Intent
 
 
 class MainActivity : AppCompatActivity() {
@@ -22,6 +23,13 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+
+
+        findViewById<ImageButton>(R.id.excerciseBtn).setOnClickListener{
+            val intentEx = Intent(this, ExcerciseActivity::class.java)
+            startActivity(intentEx)
+        }
 
         WeatherTask().execute()
         findViewById<ImageButton>(R.id.excerciseBtn).setOnClickListener() {
