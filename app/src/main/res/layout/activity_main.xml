@@ -20,7 +20,7 @@
             android:layout_height="match_parent">
 
             <ImageButton
-                android:id="@+id/button2"
+                android:id="@+id/settingBtn"
                 android:layout_width="40sp"
                 android:layout_height="40sp"
                 android:layout_marginTop="10sp"
@@ -31,7 +31,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <ImageButton
-                android:id="@+id/button"
+                android:id="@+id/excerciseBtn"
                 android:layout_width="40sp"
                 android:layout_height="40sp"
                 android:layout_marginStart="5sp"
