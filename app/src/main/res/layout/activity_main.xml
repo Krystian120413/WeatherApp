@@ -4,7 +4,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="25dp"
+    android:padding="25sp"
     android:background="@drawable/bg_gradient">
 
     <RelativeLayout android:id="@+id/mainContainer" android:layout_width="match_parent"
@@ -12,12 +12,20 @@
         <LinearLayout android:id="@+id/addressContainer" android:layout_width="match_parent"
             android:layout_height="wrap_content" android:orientation="vertical"
             android:gravity="center">
-            <TextView android:id="@+id/address" android:layout_width="wrap_content"
-                android:layout_height="wrap_content" android:textSize="24dp"
-                android:text="DHAKA, BD"/>
-            <TextView android:id="@+id/updated_at" android:layout_width="wrap_content"
-                android:layout_height="wrap_content" android:textSize="14dp"
-                android:text="20 April 2012, 20:08 PM"/>
+
+            <TextView
+                android:id="@+id/address"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/city"
+                android:textSize="24sp" />
+
+            <TextView
+                android:id="@+id/updated_at"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/date"
+                android:textSize="14sp" />
         </LinearLayout>
 
 
@@ -26,22 +34,34 @@
             android:layout_centerInParent="true">
 
             <TextView android:id="@+id/status" android:layout_width="wrap_content"
-                android:layout_height="wrap_content" android:textSize="18dp"
+                android:layout_height="wrap_content" android:textSize="18sp"
                 android:layout_gravity="center"
-                android:text="Clear Sky"/>
-            <TextView android:id="@+id/temp" android:layout_width="wrap_content"
-                android:layout_height="wrap_content" android:textSize="90dp"
-                android:fontFamily="sans-serif-thin" android:layout_gravity="center"
-                android:text="29°C"/>
+                android:text="@string/clear_sky"/>
+
+            <TextView
+                android:id="@+id/temp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:fontFamily="sans-serif-thin"
+                android:text="@string/temp"
+                android:textSize="90sp" />
 
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                 android:orientation="horizontal" android:gravity="center">
-                <TextView android:id="@+id/temp_min" android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" android:text="Min Temp: 05:05 AM"/>
-                <Space android:layout_width="50dp" android:layout_height="wrap_content"/>
 
-                <TextView android:id="@+id/temp_max" android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" android:text="Max Temp: 05:05 PM"/>
+                <TextView
+                    android:id="@+id/temp_min"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/min_temp" />
+                <Space android:layout_width="50sp" android:layout_height="wrap_content"/>
+
+                <TextView
+                    android:id="@+id/temp_max"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/max_temp" />
             </LinearLayout>
 
         </LinearLayout>
@@ -52,121 +72,167 @@
             android:layout_alignParentBottom="true">
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                 android:orientation="horizontal" android:weightSum="3">
-                <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
+                <LinearLayout android:layout_width="0sp" android:layout_height="wrap_content"
                     android:orientation="vertical" android:layout_weight="1"
-                    android:gravity="center" android:padding="8dp"
+                    android:gravity="center" android:padding="8sp"
                     android:background="#3CF1EBF1">
-                    <ImageView android:layout_width="25dp" android:layout_height="25dp"
+
+                    <ImageView
+                        android:layout_width="25sp"
+                        android:layout_height="25sp"
+                        android:contentDescription="@string/sunrise"
                         android:src="@drawable/sunrise"
                         app:tint="#FFFFFF" />
-                    <Space android:layout_width="wrap_content" android:layout_height="5dp"/>
+                    <Space android:layout_width="wrap_content" android:layout_height="5sp"/>
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:textSize="12dp" android:text="Sunrise"/>
-                    <TextView android:id="@+id/sunrise" android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" android:textSize="14dp"
-                        android:text="06:40 AM"/>
+                        android:textSize="12sp" android:text="@string/sunrise"/>
+
+                    <TextView
+                        android:id="@+id/sunrise"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/time"
+                        android:textSize="14sp" />
                 </LinearLayout>
-                <Space android:layout_width="10dp" android:layout_height="wrap_content"/>
-                <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
+                <Space android:layout_width="10sp" android:layout_height="wrap_content"/>
+                <LinearLayout android:layout_width="0sp" android:layout_height="wrap_content"
                     android:orientation="vertical" android:layout_weight="1"
-                    android:gravity="center" android:padding="8dp"
+                    android:gravity="center" android:padding="8sp"
                     android:background="#3CF1EBF1">
-                    <ImageView android:layout_width="25dp" android:layout_height="25dp"
+
+                    <ImageView
+                        android:layout_width="25sp"
+                        android:layout_height="25sp"
+                        android:contentDescription="@string/sunset"
                         android:src="@drawable/sunset"
                         app:tint="#FFFFFF" />
-                    <Space android:layout_width="wrap_content" android:layout_height="5dp"/>
+                    <Space android:layout_width="wrap_content" android:layout_height="5sp"/>
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:textSize="12dp" android:text="Sunset"/>
-                    <TextView android:id="@+id/sunset" android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" android:textSize="14dp"
-                        android:text="06:40 AM"/>
+                        android:textSize="12sp" android:text="@string/sunset"/>
+
+                    <TextView
+                        android:id="@+id/sunset"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/time"
+                        android:textSize="14sp" />
                 </LinearLayout>
-                <Space android:layout_width="10dp" android:layout_height="wrap_content"/>
-                <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
+                <Space android:layout_width="10sp" android:layout_height="wrap_content"/>
+                <LinearLayout android:layout_width="0sp" android:layout_height="wrap_content"
                     android:orientation="vertical" android:layout_weight="1"
-                    android:gravity="center" android:padding="8dp"
+                    android:gravity="center" android:padding="8sp"
                     android:background="#3CF1EBF1">
-                    <ImageView android:layout_width="25dp" android:layout_height="25dp"
+
+                    <ImageView
+                        android:layout_width="25sp"
+                        android:layout_height="25sp"
+                        android:contentDescription="@string/wind"
                         android:src="@drawable/wind"
                         app:tint="#FFFFFF" />
-                    <Space android:layout_width="wrap_content" android:layout_height="5dp"/>
+                    <Space android:layout_width="wrap_content" android:layout_height="5sp"/>
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:textSize="12dp" android:text="Wind"/>
-                    <TextView android:id="@+id/wind" android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" android:textSize="14dp"
-                        android:text="06:40 AM"/>
+                        android:textSize="12sp" android:text="@string/wind"/>
+
+                    <TextView
+                        android:id="@+id/wind"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/time"
+                        android:textSize="14sp" />
                 </LinearLayout>
             </LinearLayout>
 
-            <Space android:layout_width="wrap_content" android:layout_height="10dp"/>
+            <Space android:layout_width="wrap_content" android:layout_height="10sp"/>
 
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                 android:orientation="horizontal" android:weightSum="3">
-                <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
+                <LinearLayout android:layout_width="0sp" android:layout_height="wrap_content"
                     android:orientation="vertical" android:layout_weight="1"
-                    android:gravity="center" android:padding="8dp"
+                    android:gravity="center" android:padding="8sp"
                     android:background="#3CF1EBF1">
-                    <ImageView android:layout_width="25dp" android:layout_height="25dp"
+
+                    <ImageView
+                        android:layout_width="25sp"
+                        android:layout_height="25sp"
+                        android:contentDescription="@string/pressure"
                         android:src="@drawable/pressure"
                         app:tint="#FFFFFF" />
-                    <Space android:layout_width="wrap_content" android:layout_height="5dp"/>
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:textSize="12dp" android:text="Pressure"/>
-                    <TextView android:id="@+id/pressure" android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" android:textSize="14dp"
-                        android:text="06:40 AM"/>
+                    <Space android:layout_width="wrap_content" android:layout_height="5sp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/pressure"
+                        android:textColor="#263238"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/pressure"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/pressure"
+                        android:textSize="14sp" />
                 </LinearLayout>
-                <Space android:layout_width="10dp" android:layout_height="wrap_content"/>
-                <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
+                <Space android:layout_width="10sp" android:layout_height="wrap_content"/>
+                <LinearLayout android:layout_width="0sp" android:layout_height="wrap_content"
                     android:orientation="vertical" android:layout_weight="1"
-                    android:gravity="center" android:padding="8dp"
+                    android:gravity="center" android:padding="8sp"
                     android:background="#3CF1EBF1">
-                    <ImageView android:layout_width="25dp" android:layout_height="25dp"
+
+                    <ImageView
+                        android:layout_width="25sp"
+                        android:layout_height="25sp"
+                        android:contentDescription="@string/humidity"
                         android:src="@drawable/humidity"
                         app:tint="#FFFFFF" />
-                    <Space android:layout_width="wrap_content" android:layout_height="5dp"/>
+                    <Space android:layout_width="wrap_content" android:layout_height="5sp"/>
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:textSize="12dp" android:text="Humidity"/>
-                    <TextView android:id="@+id/humidity" android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" android:textSize="14dp"
-                        android:text="06:40 AM"/>
+                        android:textSize="12sp" android:text="@string/humidity"/>
+
+                    <TextView
+                        android:id="@+id/humidity"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/humidity"
+                        android:textSize="14sp" />
                 </LinearLayout>
-                <Space android:layout_width="10dp" android:layout_height="wrap_content"/>
+                <Space android:layout_width="10sp" android:layout_height="wrap_content"/>
 
                 <LinearLayout
                     android:id="@+id/aqiinfo"
-                    android:layout_width="0dp"
+                    android:layout_width="0sp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:background="#3CF1EBF1"
                     android:gravity="center"
                     android:orientation="vertical"
-                    android:padding="8dp">
+                    android:padding="8sp">
 
                     <ImageView
                         android:id="@+id/airicon"
-                        android:layout_width="25dp"
-                        android:layout_height="25dp"
+                        android:layout_width="25sp"
+                        android:layout_height="25sp"
+                        android:contentDescription="@string/air_quality"
                         android:src="@drawable/airquality2"
                         app:tint="#FFFFFF" />
 
                     <Space
                         android:layout_width="wrap_content"
-                        android:layout_height="5dp" />
+                        android:layout_height="5sp" />
 
                     <TextView
                         android:id="@+id/airtext"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Air Quality"
-                        android:textSize="12dp" />
+                        android:text="@string/air_quality"
+                        android:textSize="12sp" />
 
                     <TextView
                         android:id="@+id/aqi"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="0"
-                        android:textSize="14dp" />
+                        android:text="@string/aqi"
+                        android:textSize="14sp" />
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
@@ -179,7 +245,7 @@
 
     <TextView android:id="@+id/errorText" android:layout_width="wrap_content"
         android:layout_height="wrap_content" android:layout_centerInParent="true"
-        android:visibility="gone" android:text="Something went wrong"/>
+        android:visibility="gone" android:text="@string/something_went_wrong"/>
 
 
 </RelativeLayout>
