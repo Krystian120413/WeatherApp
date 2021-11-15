@@ -96,12 +96,11 @@ class MainActivity : AppCompatActivity() {
                 findViewById<TextView>(R.id.wind).text = windSpeed
                 findViewById<TextView>(R.id.pressure).text = pressure
                 findViewById<TextView>(R.id.humidity).text = humidity
-                findViewById<TextView>(R.id.aqi).text = aqiLevel
 
                 /* Views populated, Hiding the loader, Showing the main design */
                 findViewById<ProgressBar>(R.id.loader).visibility = View.GONE
                 findViewById<RelativeLayout>(R.id.mainContainer).visibility = View.VISIBLE
-                airQualityGradient(aqiLevel.toInt())
+                airQuality(aqiLevel.toInt())
 
             } catch (e: Exception) {
                 findViewById<ProgressBar>(R.id.loader).visibility = View.GONE
@@ -110,56 +109,16 @@ class MainActivity : AppCompatActivity() {
 
         }
 
-        private fun airQualityGradient(level: Int) {
-            val gd = GradientDrawable()
-            gd.gradientType = GradientDrawable.LINEAR_GRADIENT
-            gd.orientation = GradientDrawable.Orientation.BOTTOM_TOP
-
+        @SuppressLint("SetTextI18n")
+        private fun airQuality(level: Int) {
             when (level) {
-                in 0..50 -> {
-                    gd.colors = intArrayOf(
-                        Color.rgb(0, 153, 102),
-                        Color.rgb(0, 183, 102),
-                    )
-                }
-                in 51..100 -> {
-                    gd.colors = intArrayOf(
-                        Color.rgb(255, 222, 51),
-                        Color.rgb(255, 182, 51)
-                    )
-                    findViewById<TextView>(R.id.aqi).setTextColor(Color.BLACK)
-                    findViewById<TextView>(R.id.airtext).setTextColor(Color.BLACK)
-                    findViewById<ImageView>(R.id.airicon).setColorFilter(Color.BLACK)
-                }
-                in 101..150 -> {
-                    gd.colors = intArrayOf(
-                        Color.rgb(255, 153, 51),
-                        Color.rgb(255, 123, 81)
-                    )
-                    findViewById<TextView>(R.id.aqi).setTextColor(Color.BLACK)
-                    findViewById<TextView>(R.id.airtext).setTextColor(Color.BLACK)
-                    findViewById<ImageView>(R.id.airicon).setColorFilter(Color.BLACK)
-                }
-                in 151..200 -> {
-                    gd.colors = intArrayOf(
-                        Color.rgb(204, 0, 51),
-                        Color.rgb(194, 0, 91)
-                    )
-                }
-                in 201..300 -> {
-                    gd.colors = intArrayOf(
-                        Color.rgb(102, 0, 153),
-                        Color.rgb(42, 0, 123)
-                    )
-                }
-                else -> {
-                    gd.colors = intArrayOf(
-                        Color.rgb(126, 0, 35),
-                        Color.rgb(96, 0, 65)
-                    )
-                }
+                in 0..50 -> findViewById<TextView>(R.id.aqi).text = "Good"
+                in 51..100 -> findViewById<TextView>(R.id.aqi).text = "Moderate"
+                in 101..150 -> findViewById<TextView>(R.id.aqi).text = "Unhealthy"
+                in 151..200 -> findViewById<TextView>(R.id.aqi).text = "Bad"
+                in 201..300 -> findViewById<TextView>(R.id.aqi).text = "Very Bad"
+                else -> findViewById<TextView>(R.id.aqi).text = "Hazardous"
             }
-            findViewById<LinearLayout>(R.id.aqiinfo).background = gd
         }
     }
 
