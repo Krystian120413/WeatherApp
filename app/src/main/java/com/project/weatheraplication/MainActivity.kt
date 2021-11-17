@@ -24,11 +24,14 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-
-
         findViewById<ImageButton>(R.id.excerciseBtn).setOnClickListener{
             val intentEx = Intent(this, ExcerciseActivity::class.java)
             startActivity(intentEx)
+        }
+
+        findViewById<Button>(R.id.checkWeatherBtn).setOnClickListener{
+            val intentWF = Intent(this, WeatherForecastActivity::class.java)
+            startActivity(intentWF)
         }
 
         WeatherTask().execute()
@@ -121,17 +124,16 @@ class MainActivity : AppCompatActivity() {
 
         }
 
-        @SuppressLint("SetTextI18n")
+        @SuppressLint("SetTextI18n", "ResourceAsColor")
         private fun airQuality(level: Int) {
             when (level) {
-                in 0..50 -> findViewById<TextView>(R.id.aqi).text = "Good"
-                in 51..100 -> findViewById<TextView>(R.id.aqi).text = "Moderate"
-                in 101..150 -> findViewById<TextView>(R.id.aqi).text = "Unhealthy"
-                in 151..200 -> findViewById<TextView>(R.id.aqi).text = "Bad"
-                in 201..300 -> findViewById<TextView>(R.id.aqi).text = "Very Bad"
-                else -> findViewById<TextView>(R.id.aqi).text = "Hazardous"
+                in 0..50 -> findViewById<View>(R.id.aqi).setBackgroundColor(resources.getColor(R.color.green))
+                in 51..100 -> findViewById<View>(R.id.aqi).setBackgroundColor(resources.getColor(R.color.yellow))
+                in 101..150 -> findViewById<View>(R.id.aqi).setBackgroundColor(resources.getColor(R.color.orange))
+                in 151..200 -> findViewById<View>(R.id.aqi).setBackgroundColor(resources.getColor(R.color.red))
+                in 201..300 -> findViewById<View>(R.id.aqi).setBackgroundColor(resources.getColor(R.color.bad))
+                else -> findViewById<View>(R.id.aqi).setBackgroundColor(resources.getColor(R.color.black))
             }
         }
     }
-
 }
