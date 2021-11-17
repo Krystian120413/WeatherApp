@@ -40,6 +40,18 @@
                 android:backgroundTint="#FFFFFF"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
+            <Button
+                android:id="@+id/checkWeatherBtn"
+                android:layout_width="260dp"
+                android:layout_height="52dp"
+                android:layout_marginBottom="4dp"
+                android:backgroundTint="#122259"
+                android:text="check weather forecast"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.504"
+                app:layout_constraintStart_toStartOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <LinearLayout
@@ -73,7 +85,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/addressContainer"
-            android:layout_marginTop="92dp"
+            android:layout_marginTop="72dp"
             android:gravity="center|center_horizontal|center_vertical"
             android:orientation="vertical">
 
@@ -94,10 +106,10 @@
                 android:layout_gravity="center"
                 android:layout_marginTop="5sp"
                 android:layout_marginBottom="5sp"
-                android:fontFamily="sans-serif-thin"
+                android:fontFamily="sans-serif-light"
                 android:text="@string/temp"
                 android:textColor="#FFFFFF"
-                android:textSize="70sp" />
+                android:textSize="80sp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -130,7 +142,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:layout_marginBottom="14dp"
+            android:layout_marginBottom="60dp"
             android:orientation="vertical">
 
             <LinearLayout
@@ -353,13 +365,11 @@
                         android:textColor="#FFFFFF"
                         android:textSize="12sp" />
 
-                    <TextView
+                    <View
                         android:id="@+id/aqi"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/aqi"
-                        android:textColor="#FFFFFF"
-                        android:textSize="14sp" />
+                        android:layout_width="100dp"
+                        android:layout_height="15dp"
+                        android:background="#ffffff" />
 
                 </LinearLayout>
 
