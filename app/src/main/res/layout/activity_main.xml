@@ -365,11 +365,14 @@
                         android:textColor="#FFFFFF"
                         android:textSize="12sp" />
 
-                    <View
+                    <TextView
                         android:id="@+id/aqi"
                         android:layout_width="100dp"
-                        android:layout_height="15dp"
-                        android:background="#ffffff" />
+                        android:layout_height="18dp"
+                        android:text="123"
+                        android:textColor="@color/white"
+                        android:textAlignment="center"
+                        android:background="#f6cf06" />
 
                 </LinearLayout>
 
