@@ -122,13 +122,15 @@ class MainActivity : AppCompatActivity() {
 
         @SuppressLint("SetTextI18n", "ResourceAsColor")
         private fun airQuality(level: Int) {
+            val aqi = findViewById<TextView>(R.id.aqi)
+            aqi.text = level.toString()
             when (level) {
-                in 0..50 -> findViewById<View>(R.id.aqi).setBackgroundColor(resources.getColor(R.color.green))
-                in 51..100 -> findViewById<View>(R.id.aqi).setBackgroundColor(resources.getColor(R.color.yellow))
-                in 101..150 -> findViewById<View>(R.id.aqi).setBackgroundColor(resources.getColor(R.color.orange))
-                in 151..200 -> findViewById<View>(R.id.aqi).setBackgroundColor(resources.getColor(R.color.red))
-                in 201..300 -> findViewById<View>(R.id.aqi).setBackgroundColor(resources.getColor(R.color.bad))
-                else -> findViewById<View>(R.id.aqi).setBackgroundColor(resources.getColor(R.color.black))
+                in 0..50 -> aqi.setBackgroundColor(resources.getColor(R.color.green))
+                in 51..100 -> aqi.setBackgroundColor(resources.getColor(R.color.yellow))
+                in 101..150 -> aqi.setBackgroundColor(resources.getColor(R.color.orange))
+                in 151..200 -> aqi.setBackgroundColor(resources.getColor(R.color.red))
+                in 201..300 -> aqi.setBackgroundColor(resources.getColor(R.color.bad))
+                else -> aqi.setBackgroundColor(resources.getColor(R.color.black))
             }
         }
     }
