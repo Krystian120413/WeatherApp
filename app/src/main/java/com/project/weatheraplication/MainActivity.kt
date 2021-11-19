@@ -1,7 +1,6 @@
 package com.project.weatheraplication
 
 import android.annotation.SuppressLint
-import android.graphics.Color
 import android.os.AsyncTask
 import android.os.Bundle
 import android.view.View
@@ -10,7 +9,6 @@ import org.json.JSONObject
 import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.*
-import android.graphics.drawable.GradientDrawable
 import android.widget.*
 
 
@@ -26,6 +24,12 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         WeatherTask().execute()
+        findViewById<ImageButton>(R.id.excerciseBtn).setOnClickListener() {
+            println("Dużo")
+        }
+        findViewById<ImageButton>(R.id.settingBtn).setOnClickListener() {
+            println("Pracy")
+        }
     }
 
     @SuppressLint("StaticFieldLeak")
