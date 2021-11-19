@@ -1,6 +1,8 @@
 package com.project.weatheraplication
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.AsyncTask
 import android.os.Bundle
 import android.view.View
@@ -11,6 +13,16 @@ import java.text.SimpleDateFormat
 import java.util.*
 import android.widget.*
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.location.Criteria
+import android.location.Geocoder
+import android.location.Location
+import android.location.LocationManager
+import androidx.annotation.NonNull
+import androidx.core.app.ActivityCompat
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.tasks.OnCompleteListener
 
 
 class MainActivity : AppCompatActivity() {
@@ -19,6 +31,10 @@ class MainActivity : AppCompatActivity() {
     val api: String = "79aaa968a0069d0b93d757ed27fea018" // Use your own API key
     val aqiApi = "https://api.waqi.info/feed/geo:50.033611;22.004722/?token=4201969e380e8f0422ceb9ef1c3b5bb500d8ffa3"
     var aqi: String = ""
+
+    private lateinit var criteria: Criteria
+    private lateinit var locationManager: LocationManager
+    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,12 +51,43 @@ class MainActivity : AppCompatActivity() {
         }
 
         WeatherTask().execute()
+
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+
         findViewById<ImageButton>(R.id.excerciseBtn).setOnClickListener() {
-            println("Dużo")
+            if (ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) == PackageManager.PERMISSION_GRANTED) {
+                getLocation()
+            } else {
+                ActivityCompat.requestPermissions(this,
+                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 44
+                )
+            }
         }
         findViewById<ImageButton>(R.id.settingBtn).setOnClickListener() {
             println("Pracy")
         }
+    }
+
+    private fun getLocation() {
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED) {
+            fusedLocationProviderClient.lastLocation.addOnCompleteListener(OnCompleteListener {
+                val location = it.result
+                if (location != null) {
+                    println("!@#!@#")
+                    val geo = Geocoder(this)
+                    val address = geo.getFromLocation(location.latitude, location.longitude, 1)
+                    println(address[0].longitude)
+                    println(address[0].latitude)
+                }
+            })
+        }
+
     }
 
     @SuppressLint("StaticFieldLeak")
