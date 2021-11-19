@@ -15,4 +15,5 @@
     <string name="max_temp">Max Temp</string>
     <string name="min_temp">Min Temp</string>
     <string name="temp">29°C</string>
+    <string name="btn">button</string>
 </resources>
