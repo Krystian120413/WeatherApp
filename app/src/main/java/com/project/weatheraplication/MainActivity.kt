@@ -2,9 +2,6 @@ package com.project.weatheraplication
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.content.Context
-import android.os.AsyncTask
-import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import org.json.JSONObject
@@ -14,11 +11,8 @@ import java.util.*
 import android.widget.*
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.location.Criteria
 import android.location.Geocoder
-import android.location.Location
-import android.location.LocationManager
-import androidx.annotation.NonNull
+import android.os.*
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -27,13 +21,13 @@ import com.google.android.gms.tasks.OnCompleteListener
 
 class MainActivity : AppCompatActivity() {
 
-    val city: String = "rzeszow,pl"
+
+    private var latitude: Double = 0.00
+    private var longitude: Double = 0.00
     val api: String = "79aaa968a0069d0b93d757ed27fea018" // Use your own API key
-    val aqiApi = "https://api.waqi.info/feed/geo:50.033611;22.004722/?token=4201969e380e8f0422ceb9ef1c3b5bb500d8ffa3"
+    val aqiToken = "4201969e380e8f0422ceb9ef1c3b5bb500d8ffa3"
     var aqi: String = ""
 
-    private lateinit var criteria: Criteria
-    private lateinit var locationManager: LocationManager
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,24 +44,28 @@ class MainActivity : AppCompatActivity() {
             startActivity(intentWF)
         }
 
-        WeatherTask().execute()
-
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+        ActivityCompat.requestPermissions(this,
+            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+            44)
+        do {
+            if (ActivityCompat.checkSelfPermission
+                    (this, Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+                getLocation()
+                break
+            }
+            else {
+                ActivityCompat.requestPermissions(this,
+                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                    44)
+                Thread.sleep(2000)
+            }
+        } while(true)
 
         findViewById<ImageButton>(R.id.excerciseBtn).setOnClickListener() {
-            if (ActivityCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                ) == PackageManager.PERMISSION_GRANTED) {
-                getLocation()
-            } else {
-                ActivityCompat.requestPermissions(this,
-                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 44
-                )
-            }
         }
         findViewById<ImageButton>(R.id.settingBtn).setOnClickListener() {
-            println("Pracy")
         }
     }
 
@@ -79,15 +77,15 @@ class MainActivity : AppCompatActivity() {
             fusedLocationProviderClient.lastLocation.addOnCompleteListener(OnCompleteListener {
                 val location = it.result
                 if (location != null) {
-                    println("!@#!@#")
                     val geo = Geocoder(this)
                     val address = geo.getFromLocation(location.latitude, location.longitude, 1)
-                    println(address[0].longitude)
-                    println(address[0].latitude)
+                    latitude = address[0].latitude
+                    longitude = address[0].longitude
+
+                    WeatherTask().execute()
                 }
             })
         }
-
     }
 
     @SuppressLint("StaticFieldLeak")
@@ -95,7 +93,6 @@ class MainActivity : AppCompatActivity() {
 
         override fun onPreExecute() {
             super.onPreExecute()
-            /* Showing the ProgressBar, Making the main design GONE */
             findViewById<ProgressBar>(R.id.loader).visibility = View.VISIBLE
             findViewById<RelativeLayout>(R.id.mainContainer).visibility = View.GONE
             findViewById<TextView>(R.id.errorText).visibility = View.GONE
@@ -103,12 +100,12 @@ class MainActivity : AppCompatActivity() {
 
         override fun doInBackground(vararg params: String?): String? {
             val response:String? = try {
-                URL("https://api.openweathermap.org/data/2.5/weather?q=$city&units=metric&appid=$api").readText(Charsets.UTF_8)
+                URL("https://api.openweathermap.org/data/2.5/weather?lat=$latitude&lon=$longitude&appid=$api&units=metric").readText(Charsets.UTF_8)
 
             } catch (e: Exception) {
                 null
             }
-            aqi = URL(aqiApi).readText(Charsets.UTF_8)
+            aqi = URL("https://api.waqi.info/feed/geo:$latitude;$longitude/?token=$aqiToken").readText(Charsets.UTF_8)
             return response
         }
 
