@@ -132,8 +132,8 @@ class MainActivity : AppCompatActivity() {
                 val pressure = main.getString("pressure") + " hPa"
                 val humidity = main.getString("humidity") + "%"
 
-                val sunrise:Long = sys.getLong("sunrise")
-                val sunset:Long = sys.getLong("sunset")
+                val sunrise:Long = sys.getLong("sunrise")+jsonObj.getLong("timezone")
+                val sunset:Long = sys.getLong("sunset")+jsonObj.getLong("timezone")
                 val windSpeed = (wind.getDouble("speed")*3.6).toInt().toString() + " km/h"
                 val weatherDescription = weather.getString("description")
 
