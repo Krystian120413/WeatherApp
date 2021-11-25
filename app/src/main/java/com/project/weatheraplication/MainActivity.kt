@@ -58,7 +58,6 @@ class MainActivity : AppCompatActivity() {
                 ActivityCompat.requestPermissions(this,
                     arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
                     44)
-                Thread.sleep(1000)
             }
         } while(true)
 
