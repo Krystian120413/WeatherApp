@@ -45,9 +45,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
-        ActivityCompat.requestPermissions(this,
-            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-            44)
+
         do {
             if (ActivityCompat.checkSelfPermission
                     (this, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -59,7 +57,7 @@ class MainActivity : AppCompatActivity() {
                 ActivityCompat.requestPermissions(this,
                     arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
                     44)
-                Thread.sleep(2000)
+                Thread.sleep(1000)
             }
         } while(true)
 
