@@ -63,9 +63,14 @@ class MainActivity : AppCompatActivity() {
             }
         } while(true)
 
-        findViewById<ImageButton>(R.id.excerciseBtn).setOnClickListener() {
+        findViewById<ImageButton>(R.id.excerciseBtn).setOnClickListener{
+            val intentEx = Intent(this, ExcerciseActivity::class.java)
+            startActivity(intentEx)
         }
-        findViewById<ImageButton>(R.id.settingBtn).setOnClickListener() {
+
+        findViewById<Button>(R.id.checkWeatherBtn).setOnClickListener{
+            val intentWF = Intent(this, WeatherForecastActivity::class.java)
+            startActivity(intentWF)
         }
     }
 
