@@ -17,6 +17,7 @@ import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.tasks.OnCompleteListener
+import java.time.ZoneId
 
 
 class MainActivity : AppCompatActivity() {
@@ -135,8 +136,9 @@ class MainActivity : AppCompatActivity() {
                 val pressure = main.getString("pressure") + " hPa"
                 val humidity = main.getString("humidity") + "%"
 
-                val sunrise:Long = sys.getLong("sunrise")+jsonObj.getLong("timezone")
-                val sunset:Long = sys.getLong("sunset")+jsonObj.getLong("timezone")
+                val timezone = jsonObj.getLong("timezone")
+                val sunrise: Long = (sys.getLong("sunrise")+timezone)*1000
+                val sunset: Long = (sys.getLong("sunset")+timezone)*1000
                 val windSpeed = (wind.getDouble("speed")*3.6).toInt().toString() + " km/h"
                 val weatherDescription = weather.getString("description")
 
@@ -150,11 +152,13 @@ class MainActivity : AppCompatActivity() {
                         Locale.getDefault()
                     ) else it.toString()
                 }
+                val simple: SimpleDateFormat = SimpleDateFormat("kk:mm")
+                simple.timeZone = TimeZone.getTimeZone("UTC")
                 findViewById<TextView>(R.id.temp).text = temp
                 findViewById<TextView>(R.id.temp_min).text = tempMin
                 findViewById<TextView>(R.id.temp_max).text = tempMax
-                findViewById<TextView>(R.id.sunrise).text = SimpleDateFormat("kk:mm").format(Date(sunrise*1000))
-                findViewById<TextView>(R.id.sunset).text = SimpleDateFormat("kk:mm").format(Date(sunset*1000))
+                findViewById<TextView>(R.id.sunrise).text = simple.format(Date(sunrise))
+                findViewById<TextView>(R.id.sunset).text = simple.format(Date(sunset))
                 findViewById<TextView>(R.id.wind).text = windSpeed
                 findViewById<TextView>(R.id.pressure).text = pressure
                 findViewById<TextView>(R.id.humidity).text = humidity
