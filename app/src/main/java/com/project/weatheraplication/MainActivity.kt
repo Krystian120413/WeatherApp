@@ -2,6 +2,7 @@ package com.project.weatheraplication
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.DialogInterface
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import org.json.JSONObject
@@ -13,11 +14,12 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Geocoder
 import android.os.*
+import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.tasks.OnCompleteListener
-import java.time.ZoneId
+import java.io.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -47,19 +49,13 @@ class MainActivity : AppCompatActivity() {
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
 
-        do {
-            if (ActivityCompat.checkSelfPermission
-                    (this, Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
-                getLocation()
-                break
-            }
-            else {
-                ActivityCompat.requestPermissions(this,
-                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                    44)
-            }
-        } while(true)
+        getPermissions()
+
+        SystemClock.sleep(2000)
+
+        if(getPermissions()){
+            getLocation()
+        }
 
         findViewById<ImageButton>(R.id.excerciseBtn).setOnClickListener{
             val intentEx = Intent(this, ExcerciseActivity::class.java)
@@ -69,6 +65,43 @@ class MainActivity : AppCompatActivity() {
         findViewById<Button>(R.id.checkWeatherBtn).setOnClickListener{
             val intentWF = Intent(this, WeatherForecastActivity::class.java)
             startActivity(intentWF)
+        }
+    }
+
+    private fun getPermissions():Boolean {
+        if ((ActivityCompat.checkSelfPermission
+                (this, Manifest.permission.ACCESS_FINE_LOCATION)
+                    == PackageManager.PERMISSION_GRANTED) && (ActivityCompat.checkSelfPermission
+                (this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                    == PackageManager.PERMISSION_GRANTED)
+        ) {
+            return true
+        } else {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ),
+                44
+            )
+            return false
+        }
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun readLastLocation() {
+        try {
+            val fIn: FileInputStream = openFileInput("location.txt")
+            val isr = InputStreamReader(fIn)
+
+            val read = isr.readText().split("\n")
+            latitude = read[0].toDouble()
+            longitude = read[1].toDouble()
+
+            WeatherTask().execute()
+        } catch (e: FileNotFoundException) {
+            findViewById<TextView>(R.id.address).text = "File missing"
         }
     }
 
@@ -85,9 +118,21 @@ class MainActivity : AppCompatActivity() {
                     latitude = address[0].latitude
                     longitude = address[0].longitude
 
+                    val fOut: FileOutputStream = openFileOutput(
+                        "location.txt",
+                        MODE_PRIVATE
+                    )
+                    val osw = OutputStreamWriter(fOut)
+                    osw.write("$latitude\n$longitude")
+                    osw.flush()
+                    osw.close()
+
                     WeatherTask().execute()
                 }
             })
+        }
+        else {
+            readLastLocation()
         }
     }
 
