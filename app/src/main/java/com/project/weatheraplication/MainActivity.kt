@@ -109,26 +109,27 @@ class MainActivity : AppCompatActivity() {
                 this,
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED) {
-                fusedLocationProviderClient.lastLocation.addOnSuccessListener{location : Location? ->
-                println(location)
-                if (location != null) {
-                    val geo = Geocoder(this)
-                    val address = geo.getFromLocation(location.latitude, location.longitude, 1)
-                    latitude = address[0].latitude
-                    longitude = address[0].longitude
+                fusedLocationProviderClient.lastLocation.addOnCompleteListener {
+                    val location = it.result
+                    println(location)
+                    if (location != null) {
+                        val geo = Geocoder(this)
+                        val address = geo.getFromLocation(location.latitude, location.longitude, 1)
+                        latitude = address[0].latitude
+                        longitude = address[0].longitude
 
-                    val fOut: FileOutputStream = openFileOutput(
-                        "location.txt",
-                        MODE_PRIVATE
-                    )
-                    val osw = OutputStreamWriter(fOut)
-                    osw.write("$latitude\n$longitude")
-                    osw.flush()
-                    osw.close()
+                        val fOut: FileOutputStream = openFileOutput(
+                            "location.txt",
+                            MODE_PRIVATE
+                        )
+                        val osw = OutputStreamWriter(fOut)
+                        osw.write("$latitude\n$longitude")
+                        osw.flush()
+                        osw.close()
 
-                    WeatherTask().execute()
+                        WeatherTask().execute()
+                    }
                 }
-            }
         }
         else {
             readLastLocation()
