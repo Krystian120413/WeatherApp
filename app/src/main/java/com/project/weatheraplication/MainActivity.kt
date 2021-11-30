@@ -13,6 +13,7 @@ import android.widget.*
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Geocoder
+import android.location.Location
 import android.os.*
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
@@ -37,16 +38,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        findViewById<ImageButton>(R.id.excerciseBtn).setOnClickListener{
-            val intentEx = Intent(this, ExcerciseActivity::class.java)
-            startActivity(intentEx)
-        }
-
-        findViewById<Button>(R.id.checkWeatherBtn).setOnClickListener{
-            val intentWF = Intent(this, WeatherForecastActivity::class.java)
-            startActivity(intentWF)
-        }
-
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
 
         getPermissions()
@@ -56,6 +47,9 @@ class MainActivity : AppCompatActivity() {
         if(getPermissions()){
             getLocation()
         }
+        else {
+            readLastLocation()
+        }
 
         findViewById<ImageButton>(R.id.excerciseBtn).setOnClickListener{
             val intentEx = Intent(this, ExcerciseActivity::class.java)
@@ -65,6 +59,11 @@ class MainActivity : AppCompatActivity() {
         findViewById<Button>(R.id.checkWeatherBtn).setOnClickListener{
             val intentWF = Intent(this, WeatherForecastActivity::class.java)
             startActivity(intentWF)
+        }
+
+        findViewById<ImageButton>(R.id.settingBtn).setOnClickListener{
+            println("work")
+            getLocation()
         }
     }
 
@@ -108,10 +107,10 @@ class MainActivity : AppCompatActivity() {
     private fun getLocation() {
         if (ActivityCompat.checkSelfPermission(
                 this,
-                Manifest.permission.ACCESS_FINE_LOCATION
+                Manifest.permission.ACCESS_COARSE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED) {
-            fusedLocationProviderClient.lastLocation.addOnCompleteListener(OnCompleteListener {
-                val location = it.result
+                fusedLocationProviderClient.lastLocation.addOnSuccessListener{location : Location? ->
+                println(location)
                 if (location != null) {
                     val geo = Geocoder(this)
                     val address = geo.getFromLocation(location.latitude, location.longitude, 1)
@@ -129,7 +128,7 @@ class MainActivity : AppCompatActivity() {
 
                     WeatherTask().execute()
                 }
-            })
+            }
         }
         else {
             readLastLocation()
