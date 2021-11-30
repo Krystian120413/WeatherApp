@@ -1,26 +1,37 @@
 package com.project.weatheraplication
 
+import android.Manifest
 import android.annotation.SuppressLint
-import android.graphics.Color
-import android.os.AsyncTask
-import android.os.Bundle
+import android.content.DialogInterface
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import org.json.JSONObject
 import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.*
-import android.graphics.drawable.GradientDrawable
 import android.widget.*
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.location.Geocoder
+import android.os.*
+import androidx.appcompat.app.AlertDialog
+import androidx.core.app.ActivityCompat
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.tasks.OnCompleteListener
+import java.io.*
 
 
 class MainActivity : AppCompatActivity() {
 
-    val city: String = "rzeszow,pl"
+
+    private var latitude: Double = 0.00
+    private var longitude: Double = 0.00
     val api: String = "79aaa968a0069d0b93d757ed27fea018" // Use your own API key
-    val aqiApi = "https://api.waqi.info/feed/geo:50.033611;22.004722/?token=4201969e380e8f0422ceb9ef1c3b5bb500d8ffa3"
+    val aqiToken = "4201969e380e8f0422ceb9ef1c3b5bb500d8ffa3"
     var aqi: String = ""
+
+    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,7 +47,93 @@ class MainActivity : AppCompatActivity() {
             startActivity(intentWF)
         }
 
-        WeatherTask().execute()
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+
+        getPermissions()
+
+        SystemClock.sleep(2000)
+
+        if(getPermissions()){
+            getLocation()
+        }
+
+        findViewById<ImageButton>(R.id.excerciseBtn).setOnClickListener{
+            val intentEx = Intent(this, ExcerciseActivity::class.java)
+            startActivity(intentEx)
+        }
+
+        findViewById<Button>(R.id.checkWeatherBtn).setOnClickListener{
+            val intentWF = Intent(this, WeatherForecastActivity::class.java)
+            startActivity(intentWF)
+        }
+    }
+
+    private fun getPermissions():Boolean {
+        if ((ActivityCompat.checkSelfPermission
+                (this, Manifest.permission.ACCESS_FINE_LOCATION)
+                    == PackageManager.PERMISSION_GRANTED) && (ActivityCompat.checkSelfPermission
+                (this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                    == PackageManager.PERMISSION_GRANTED)
+        ) {
+            return true
+        } else {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ),
+                44
+            )
+            return false
+        }
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun readLastLocation() {
+        try {
+            val fIn: FileInputStream = openFileInput("location.txt")
+            val isr = InputStreamReader(fIn)
+
+            val read = isr.readText().split("\n")
+            latitude = read[0].toDouble()
+            longitude = read[1].toDouble()
+
+            WeatherTask().execute()
+        } catch (e: FileNotFoundException) {
+            findViewById<TextView>(R.id.address).text = "File missing"
+        }
+    }
+
+    private fun getLocation() {
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED) {
+            fusedLocationProviderClient.lastLocation.addOnCompleteListener(OnCompleteListener {
+                val location = it.result
+                if (location != null) {
+                    val geo = Geocoder(this)
+                    val address = geo.getFromLocation(location.latitude, location.longitude, 1)
+                    latitude = address[0].latitude
+                    longitude = address[0].longitude
+
+                    val fOut: FileOutputStream = openFileOutput(
+                        "location.txt",
+                        MODE_PRIVATE
+                    )
+                    val osw = OutputStreamWriter(fOut)
+                    osw.write("$latitude\n$longitude")
+                    osw.flush()
+                    osw.close()
+
+                    WeatherTask().execute()
+                }
+            })
+        }
+        else {
+            readLastLocation()
+        }
     }
 
     @SuppressLint("StaticFieldLeak")
@@ -44,7 +141,6 @@ class MainActivity : AppCompatActivity() {
 
         override fun onPreExecute() {
             super.onPreExecute()
-            /* Showing the ProgressBar, Making the main design GONE */
             findViewById<ProgressBar>(R.id.loader).visibility = View.VISIBLE
             findViewById<RelativeLayout>(R.id.mainContainer).visibility = View.GONE
             findViewById<TextView>(R.id.errorText).visibility = View.GONE
@@ -52,12 +148,12 @@ class MainActivity : AppCompatActivity() {
 
         override fun doInBackground(vararg params: String?): String? {
             val response:String? = try {
-                URL("https://api.openweathermap.org/data/2.5/weather?q=$city&units=metric&appid=$api").readText(Charsets.UTF_8)
+                URL("https://api.openweathermap.org/data/2.5/weather?lat=$latitude&lon=$longitude&appid=$api&units=metric").readText(Charsets.UTF_8)
 
             } catch (e: Exception) {
                 null
             }
-            aqi = URL(aqiApi).readText(Charsets.UTF_8)
+            aqi = URL("https://api.waqi.info/feed/geo:$latitude;$longitude/?token=$aqiToken").readText(Charsets.UTF_8)
             return response
         }
 
@@ -84,8 +180,9 @@ class MainActivity : AppCompatActivity() {
                 val pressure = main.getString("pressure") + " hPa"
                 val humidity = main.getString("humidity") + "%"
 
-                val sunrise:Long = sys.getLong("sunrise")
-                val sunset:Long = sys.getLong("sunset")
+                val timezone = jsonObj.getLong("timezone")
+                val sunrise: Long = (sys.getLong("sunrise")+timezone)*1000
+                val sunset: Long = (sys.getLong("sunset")+timezone)*1000
                 val windSpeed = (wind.getDouble("speed")*3.6).toInt().toString() + " km/h"
                 val weatherDescription = weather.getString("description")
 
@@ -99,11 +196,13 @@ class MainActivity : AppCompatActivity() {
                         Locale.getDefault()
                     ) else it.toString()
                 }
+                val simple: SimpleDateFormat = SimpleDateFormat("kk:mm")
+                simple.timeZone = TimeZone.getTimeZone("UTC")
                 findViewById<TextView>(R.id.temp).text = temp
                 findViewById<TextView>(R.id.temp_min).text = tempMin
                 findViewById<TextView>(R.id.temp_max).text = tempMax
-                findViewById<TextView>(R.id.sunrise).text = SimpleDateFormat("kk:mm").format(Date(sunrise*1000))
-                findViewById<TextView>(R.id.sunset).text = SimpleDateFormat("kk:mm").format(Date(sunset*1000))
+                findViewById<TextView>(R.id.sunrise).text = simple.format(Date(sunrise))
+                findViewById<TextView>(R.id.sunset).text = simple.format(Date(sunset))
                 findViewById<TextView>(R.id.wind).text = windSpeed
                 findViewById<TextView>(R.id.pressure).text = pressure
                 findViewById<TextView>(R.id.humidity).text = humidity
