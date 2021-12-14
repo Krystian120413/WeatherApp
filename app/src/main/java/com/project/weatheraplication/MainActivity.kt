@@ -2,6 +2,7 @@ package com.project.weatheraplication
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Notification
 import android.content.DialogInterface
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -15,19 +16,27 @@ import android.content.pm.PackageManager
 import android.location.Geocoder
 import android.location.Location
 import android.os.*
+import android.util.Log
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationCompat
+import androidx.loader.content.AsyncTaskLoader
 import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.tasks.CancellationToken
+import com.google.android.gms.tasks.CancellationTokenSource
 import com.google.android.gms.tasks.OnCompleteListener
+import com.google.android.gms.tasks.OnTokenCanceledListener
 import java.io.*
+import java.net.HttpURLConnection
 
 
 class MainActivity : AppCompatActivity() {
 
 
-    private var latitude: Double = 0.00
-    private var longitude: Double = 0.00
+    private var latitude: Double = 22.00
+    private var longitude: Double = 57.00
     val api: String = "79aaa968a0069d0b93d757ed27fea018" // Use your own API key
     val aqiToken = "4201969e380e8f0422ceb9ef1c3b5bb500d8ffa3"
     var aqi: String = ""
@@ -38,13 +47,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
-
         getPermissions()
 
-        SystemClock.sleep(2000)
-
         if(getPermissions()){
+            fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
             getLocation()
         }
         else {
@@ -62,8 +68,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         findViewById<ImageButton>(R.id.settingBtn).setOnClickListener{
-            println("work")
-            getLocation()
+            val intentSetting = Intent(this, SettingsActivity::class.java)
+            startActivity(intentSetting)
+            //SendNotification(this).createNotificationChannel()
         }
     }
 
@@ -95,8 +102,10 @@ class MainActivity : AppCompatActivity() {
             val isr = InputStreamReader(fIn)
 
             val read = isr.readText().split("\n")
-            latitude = read[0].toDouble()
-            longitude = read[1].toDouble()
+            latitude = (read[0].toDouble())
+            longitude = (read[1].toDouble())
+            isr.close()
+            fIn.close()
 
             WeatherTask().execute()
         } catch (e: FileNotFoundException) {
@@ -109,9 +118,8 @@ class MainActivity : AppCompatActivity() {
                 this,
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED) {
-                fusedLocationProviderClient.lastLocation.addOnCompleteListener {
+                fusedLocationProviderClient.getCurrentLocation(PRIORITY_HIGH_ACCURACY, CancellationTokenSource().token).addOnCompleteListener{
                     val location = it.result
-                    println(location)
                     if (location != null) {
                         val geo = Geocoder(this)
                         val address = geo.getFromLocation(location.latitude, location.longitude, 1)
@@ -126,6 +134,7 @@ class MainActivity : AppCompatActivity() {
                         osw.write("$latitude\n$longitude")
                         osw.flush()
                         osw.close()
+                        fOut.close()
 
                         WeatherTask().execute()
                     }
@@ -149,7 +158,6 @@ class MainActivity : AppCompatActivity() {
         override fun doInBackground(vararg params: String?): String? {
             val response:String? = try {
                 URL("https://api.openweathermap.org/data/2.5/weather?lat=$latitude&lon=$longitude&appid=$api&units=metric").readText(Charsets.UTF_8)
-
             } catch (e: Exception) {
                 null
             }
@@ -161,7 +169,6 @@ class MainActivity : AppCompatActivity() {
         override fun onPostExecute(result: String) {
             super.onPostExecute(result)
             try {
-                /* Extracting JSON returns from the API */
                 val jsonObj = JSONObject(result)
                 var aqiLevel = "0"
                 if (aqi != "") {
@@ -188,7 +195,6 @@ class MainActivity : AppCompatActivity() {
 
                 val address = jsonObj.getString("name")+", "+sys.getString("country")
 
-                /* Populating extracted data into our views */
                 findViewById<TextView>(R.id.address).text = address
                 findViewById<TextView>(R.id.updated_at).text =  updatedAtText
                 findViewById<TextView>(R.id.status).text = weatherDescription.replaceFirstChar {
@@ -207,11 +213,9 @@ class MainActivity : AppCompatActivity() {
                 findViewById<TextView>(R.id.pressure).text = pressure
                 findViewById<TextView>(R.id.humidity).text = humidity
 
-                /* Views populated, Hiding the loader, Showing the main design */
                 findViewById<ProgressBar>(R.id.loader).visibility = View.GONE
                 findViewById<RelativeLayout>(R.id.mainContainer).visibility = View.VISIBLE
                 airQuality(aqiLevel.toInt())
-
             } catch (e: Exception) {
                 findViewById<ProgressBar>(R.id.loader).visibility = View.GONE
                 findViewById<TextView>(R.id.errorText).visibility = View.VISIBLE
@@ -232,5 +236,19 @@ class MainActivity : AppCompatActivity() {
                 else -> aqi.setBackgroundColor(resources.getColor(R.color.black))
             }
         }
+    }
+
+    fun isInternetWorking(): Boolean {
+        var success = false
+        try {
+            val url = URL("https://google.com")
+            val connection: HttpURLConnection = url.openConnection() as HttpURLConnection
+            connection.connectTimeout = 10000
+            connection.connect()
+            success = connection.responseCode == 200
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+        return success
     }
 }

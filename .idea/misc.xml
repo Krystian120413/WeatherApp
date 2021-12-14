@@ -4,7 +4,10 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Studia/Programowanie/WeatherApp/app/src/main/res/drawable/bg_gradient.xml" value="0.33" />
-        <entry key="..\:/Studia/Programowanie/WeatherApp/app/src/main/res/layout/activity_main.xml" value="0.67" />
+        <entry key="..\:/Studia/Programowanie/WeatherApp/app/src/main/res/layout/activity_excercise.xml" value="0.24375" />
+        <entry key="..\:/Studia/Programowanie/WeatherApp/app/src/main/res/layout/activity_main.xml" value="0.25" />
+        <entry key="..\:/Studia/Programowanie/WeatherApp/app/src/main/res/layout/activity_settings.xml" value="0.371875" />
+        <entry key="..\:/Studia/Programowanie/WeatherApp/app/src/main/res/layout/activity_weather_forecast.xml" value="0.5" />
         <entry key="..\:/Users/zbyrad/Desktop/pliki/AndrioidStudio_projekty/WeatherApp/app/src/main/res/drawable/bg_bn_gradient.xml" value="0.2703125" />
         <entry key="..\:/Users/zbyrad/Desktop/pliki/AndrioidStudio_projekty/WeatherApp/app/src/main/res/drawable/bg_gradient.xml" value="0.2703125" />
         <entry key="..\:/Users/zbyrad/Desktop/pliki/AndrioidStudio_projekty/WeatherApp/app/src/main/res/layout/activity_excercise.xml" value="0.23369565217391305" />
