@@ -2,8 +2,6 @@ package com.project.weatheraplication
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.Notification
-import android.content.DialogInterface
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import org.json.JSONObject
@@ -14,25 +12,19 @@ import android.widget.*
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Geocoder
-import android.location.Location
 import android.os.*
-import android.util.Log
-import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
-import androidx.core.app.NotificationCompat
-import androidx.loader.content.AsyncTaskLoader
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY
 import com.google.android.gms.location.LocationServices
-import com.google.android.gms.tasks.CancellationToken
 import com.google.android.gms.tasks.CancellationTokenSource
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.android.gms.tasks.OnTokenCanceledListener
 import java.io.*
-import java.net.HttpURLConnection
+import java.net.InetAddress
+import com.project.weatheraplication.LocationDialog as dialog
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(),
+    com.project.weatheraplication.LocationDialog.LocationDialogListener {
 
 
     private var latitude: Double = 22.00
@@ -40,6 +32,7 @@ class MainActivity : AppCompatActivity() {
     val api: String = "79aaa968a0069d0b93d757ed27fea018" // Use your own API key
     val aqiToken = "4201969e380e8f0422ceb9ef1c3b5bb500d8ffa3"
     var aqi: String = ""
+    var city: String = ""
 
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
@@ -47,14 +40,15 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        getPermissions()
-
-        if(getPermissions()){
+        if(getPermissions() && isInternetAvailable()){
             fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
             getLocation()
         }
-        else {
+        else if (isInternetAvailable()){
             readLastLocation()
+        }
+        else {
+            println("niemaneta")
         }
 
         findViewById<ImageButton>(R.id.excerciseBtn).setOnClickListener{
@@ -69,9 +63,20 @@ class MainActivity : AppCompatActivity() {
 
         findViewById<ImageButton>(R.id.settingBtn).setOnClickListener{
             val intentSetting = Intent(this, SettingsActivity::class.java)
-            startActivity(intentSetting)
+            //startActivity(intentSetting)
             //SendNotification(this).createNotificationChannel()
+            openDialog()
         }
+    }
+
+    private fun openDialog() {
+        val locationDialog = dialog()
+        locationDialog.show(supportFragmentManager, "example dialog")
+    }
+
+    override fun applyText(city: String) {
+        this.city = city
+        findViewById<TextView>(R.id.address).text = city
     }
 
     private fun getPermissions():Boolean {
@@ -96,8 +101,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     @SuppressLint("SetTextI18n")
-    private fun readLastLocation() {
-        try {
+    private fun readLastLocation(): Boolean {
+        return try {
             val fIn: FileInputStream = openFileInput("location.txt")
             val isr = InputStreamReader(fIn)
 
@@ -108,8 +113,9 @@ class MainActivity : AppCompatActivity() {
             fIn.close()
 
             WeatherTask().execute()
+            true
         } catch (e: FileNotFoundException) {
-            findViewById<TextView>(R.id.address).text = "File missing"
+            false
         }
     }
 
@@ -238,17 +244,13 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun isInternetWorking(): Boolean {
-        var success = false
-        try {
-            val url = URL("https://google.com")
-            val connection: HttpURLConnection = url.openConnection() as HttpURLConnection
-            connection.connectTimeout = 10000
-            connection.connect()
-            success = connection.responseCode == 200
-        } catch (e: IOException) {
-            e.printStackTrace()
+    private fun isInternetAvailable(): Boolean {
+        return try {
+            val ipAddr: InetAddress = InetAddress.getByName("google.com")
+            //You can replace it with your name
+            !ipAddr.equals("")
+        } catch (e: java.lang.Exception) {
+            false
         }
-        return success
     }
 }

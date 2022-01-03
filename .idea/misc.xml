@@ -4,7 +4,12 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Studia/Programowanie/WeatherApp/app/src/main/res/drawable/bg_gradient.xml" value="0.33" />
-        <entry key="..\:/Studia/Programowanie/WeatherApp/app/src/main/res/layout/activity_main.xml" value="0.67" />
+        <entry key="..\:/Studia/Programowanie/WeatherApp/app/src/main/res/layout/activity_excercise.xml" value="0.24322916666666666" />
+        <entry key="..\:/Studia/Programowanie/WeatherApp/app/src/main/res/layout/activity_main.xml" value="0.33" />
+        <entry key="..\:/Studia/Programowanie/WeatherApp/app/src/main/res/layout/activity_settings.xml" value="0.24322916666666666" />
+        <entry key="..\:/Studia/Programowanie/WeatherApp/app/src/main/res/layout/dialog_sign.xml" value="0.24322916666666666" />
+        <entry key="..\:/Studia/Programowanie/WeatherApp/app/src/main/res/layout/dialog_signin.xml" value="0.371875" />
+        <entry key="..\:/Studia/Programowanie/WeatherApp/app/src/main/res/layout/layout_dialog.xml" value="0.24322916666666666" />
         <entry key="..\:/Users/Kryst/Desktop/pliki/AndroidProjekts/WeatherApp/app/src/main/res/layout/activity_excercise.xml" value="0.33" />
         <entry key="..\:/Users/Kryst/Desktop/pliki/AndroidProjekts/WeatherApp/app/src/main/res/layout/activity_main.xml" value="0.2598958333333333" />
         <entry key="..\:/Users/Kryst/Desktop/pliki/AndroidProjekts/WeatherApp/app/src/main/res/layout/activity_second.xml" value="0.36186594202898553" />
