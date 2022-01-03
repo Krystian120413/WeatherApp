@@ -13,10 +13,10 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Geocoder
 import android.os.*
+import android.telephony.mbms.MbmsErrors
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY
-import com.google.android.gms.location.LocationServices
 import com.google.android.gms.tasks.CancellationTokenSource
 import java.io.*
 import java.net.InetAddress
@@ -33,6 +33,8 @@ class MainActivity : AppCompatActivity(),
     val aqiToken = "4201969e380e8f0422ceb9ef1c3b5bb500d8ffa3"
     var aqi: String = ""
     var city: String = ""
+    var weatherApi: String = ""
+    var aqiApi: String = ""
 
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
@@ -40,12 +42,13 @@ class MainActivity : AppCompatActivity(),
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        if(getPermissions() && isInternetAvailable()){
+        /*if(getPermissions() && isInternetAvailable()){
             fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
             getLocation()
-        }
-        else if (isInternetAvailable()){
-            readLastLocation()
+        }*/
+        println(isInternetAvailable())
+        if (isInternetAvailable()){
+            openDialog()
         }
         else {
             println("niemaneta")
@@ -76,7 +79,7 @@ class MainActivity : AppCompatActivity(),
 
     override fun applyText(city: String) {
         this.city = city
-        findViewById<TextView>(R.id.address).text = city
+        getLocation()
     }
 
     private fun getPermissions():Boolean {
@@ -124,6 +127,7 @@ class MainActivity : AppCompatActivity(),
                 this,
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED) {
+            try {
                 fusedLocationProviderClient.getCurrentLocation(PRIORITY_HIGH_ACCURACY, CancellationTokenSource().token).addOnCompleteListener{
                     val location = it.result
                     if (location != null) {
@@ -142,13 +146,22 @@ class MainActivity : AppCompatActivity(),
                         osw.close()
                         fOut.close()
 
+                        weatherApi = "https://api.openweathermap.org/data/2.5/weather?lat=$latitude&lon=$longitude&appid=$api&units=metric"
+                        aqiApi = "https://api.waqi.info/feed/geo:$latitude;$longitude/?token=$aqiToken"
+
                         WeatherTask().execute()
                     }
                 }
+            } catch (e: UninitializedPropertyAccessException) {
+                weatherApi = "https://api.openweathermap.org/data/2.5/weather?q=$city&appid=$api&units=metric"
+                aqiApi = "https://api.waqi.info/feed/$city/?token=$aqiToken"
+
+                WeatherTask().execute()
+            }
         }
-        else {
+        /*else {
             readLastLocation()
-        }
+        }*/
     }
 
     @SuppressLint("StaticFieldLeak")
@@ -162,12 +175,12 @@ class MainActivity : AppCompatActivity(),
         }
 
         override fun doInBackground(vararg params: String?): String? {
-            val response:String? = try {
-                URL("https://api.openweathermap.org/data/2.5/weather?lat=$latitude&lon=$longitude&appid=$api&units=metric").readText(Charsets.UTF_8)
+            val response: String? = try {
+                URL(weatherApi).readText(Charsets.UTF_8)
             } catch (e: Exception) {
                 null
             }
-            aqi = URL("https://api.waqi.info/feed/geo:$latitude;$longitude/?token=$aqiToken").readText(Charsets.UTF_8)
+            aqi = URL(aqiApi).readText(Charsets.UTF_8)
             return response
         }
 
@@ -223,8 +236,9 @@ class MainActivity : AppCompatActivity(),
                 findViewById<RelativeLayout>(R.id.mainContainer).visibility = View.VISIBLE
                 airQuality(aqiLevel.toInt())
             } catch (e: Exception) {
-                findViewById<ProgressBar>(R.id.loader).visibility = View.GONE
-                findViewById<TextView>(R.id.errorText).visibility = View.VISIBLE
+                Toast.makeText(applicationContext, "Something went wrong!", Toast.LENGTH_SHORT).show()
+                finish()
+                startActivity(intent)
             }
 
         }
@@ -246,8 +260,7 @@ class MainActivity : AppCompatActivity(),
 
     private fun isInternetAvailable(): Boolean {
         return try {
-            val ipAddr: InetAddress = InetAddress.getByName("google.com")
-            //You can replace it with your name
+            val ipAddr: InetAddress = InetAddress.getByName("8.8.8.8")
             !ipAddr.equals("")
         } catch (e: java.lang.Exception) {
             false

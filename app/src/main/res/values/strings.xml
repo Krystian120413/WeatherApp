@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">WeatherAplication</string>
     <string name="sunrise">Sunrise</string>
-    <string name="city">Brak lokalizacji</string>
+    <string name="city">No location</string>
     <string name="pressure">Pressure</string>
     <string name="wind">Wind</string>
     <string name="sunset">Sunset</string>
@@ -18,4 +18,5 @@
     <string name="btn">button</string>
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
+    <string name="inputCityName">Input city name</string>
 </resources>

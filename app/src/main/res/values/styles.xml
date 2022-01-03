@@ -8,6 +8,6 @@
     </style>
     <style name="Dialog" parent="Theme.MaterialComponents.Light.Dialog.Alert">
         <item name="colorPrimary">@color/black</item>
-        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/black</item>
     </style>
 </resources>
