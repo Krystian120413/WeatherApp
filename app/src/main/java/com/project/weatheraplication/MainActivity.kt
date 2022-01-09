@@ -17,6 +17,7 @@ import android.telephony.mbms.MbmsErrors
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY
+import com.google.android.gms.location.LocationServices
 import com.google.android.gms.tasks.CancellationTokenSource
 import java.io.*
 import java.net.InetAddress
@@ -26,11 +27,10 @@ import com.project.weatheraplication.LocationDialog as dialog
 class MainActivity : AppCompatActivity(),
     com.project.weatheraplication.LocationDialog.LocationDialogListener {
 
-
     private var latitude: Double = 22.00
     private var longitude: Double = 57.00
-    val api: String = "79aaa968a0069d0b93d757ed27fea018" // Use your own API key
-    val aqiToken = "4201969e380e8f0422ceb9ef1c3b5bb500d8ffa3"
+    private val api: String = "79aaa968a0069d0b93d757ed27fea018"
+    private val aqiToken = "4201969e380e8f0422ceb9ef1c3b5bb500d8ffa3"
     var aqi: String = ""
     var city: String = ""
     var weatherApi: String = ""
@@ -42,12 +42,11 @@ class MainActivity : AppCompatActivity(),
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        /*if(getPermissions() && isInternetAvailable()){
+        if(getPermissions() && isInternetAvailable()){
             fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
             getLocation()
-        }*/
-        println(isInternetAvailable())
-        if (isInternetAvailable()){
+        }
+        else if (isInternetAvailable()){
             openDialog()
         }
         else {
@@ -66,9 +65,10 @@ class MainActivity : AppCompatActivity(),
 
         findViewById<ImageButton>(R.id.settingBtn).setOnClickListener{
             val intentSetting = Intent(this, SettingsActivity::class.java)
-            //startActivity(intentSetting)
+            intentSetting.putExtra("Address", findViewById<TextView>(R.id.address).text)
+            startActivity(intentSetting)
             //SendNotification(this).createNotificationChannel()
-            openDialog()
+            //openDialog()
         }
     }
 
