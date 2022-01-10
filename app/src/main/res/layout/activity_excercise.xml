@@ -53,7 +53,7 @@
                     app:srcCompat="@drawable/yoga" />
 
                 <TextView
-                    android:id="@+id/textView8"
+                    android:id="@+id/timer1"
                     android:layout_width="wrap_content"
                     android:layout_height="44dp"
                     android:layout_marginLeft="5sp"
@@ -66,7 +66,7 @@
                     android:textStyle="bold" />
 
                 <Button
-                    android:id="@+id/button7"
+                    android:id="@+id/start1"
                     android:layout_width="wrap_content"
                     android:layout_height="50sp"
                     android:layout_weight="1"
@@ -98,7 +98,7 @@
                     app:srcCompat="@drawable/push_up" />
 
                 <TextView
-                    android:id="@+id/textView9"
+                    android:id="@+id/timer2"
                     android:layout_width="wrap_content"
                     android:layout_height="44dp"
                     android:layout_weight="1"
@@ -109,7 +109,7 @@
                     android:textStyle="bold" />
 
                 <Button
-                    android:id="@+id/button6"
+                    android:id="@+id/start2"
                     android:layout_width="wrap_content"
                     android:layout_height="50sp"
                     android:layout_weight="1"
@@ -141,7 +141,7 @@
                     app:srcCompat="@drawable/sit_up" />
 
                 <TextView
-                    android:id="@+id/textView10"
+                    android:id="@+id/timer3"
                     android:layout_width="wrap_content"
                     android:layout_height="44dp"
                     android:layout_weight="1"
@@ -152,7 +152,7 @@
                     android:textStyle="bold" />
 
                 <Button
-                    android:id="@+id/button5"
+                    android:id="@+id/start3"
                     android:layout_width="wrap_content"
                     android:layout_height="50sp"
                     android:layout_weight="1"
@@ -184,7 +184,7 @@
                     app:srcCompat="@drawable/excercise" />
 
                 <TextView
-                    android:id="@+id/textView11"
+                    android:id="@+id/timer4"
                     android:layout_width="wrap_content"
                     android:layout_height="44dp"
                     android:layout_weight="1"
@@ -195,7 +195,7 @@
                     android:textStyle="bold" />
 
                 <Button
-                    android:id="@+id/button4"
+                    android:id="@+id/start4"
                     android:layout_width="wrap_content"
                     android:layout_height="50sp"
                     android:layout_weight="1"
@@ -228,7 +228,7 @@
                     app:srcCompat="@drawable/exercising" />
 
                 <TextView
-                    android:id="@+id/textView8"
+                    android:id="@+id/timer5"
                     android:layout_width="wrap_content"
                     android:layout_height="44dp"
                     android:layout_marginLeft="5sp"
@@ -241,7 +241,7 @@
                     android:textStyle="bold" />
 
                 <Button
-                    android:id="@+id/button7"
+                    android:id="@+id/start5"
                     android:layout_width="wrap_content"
                     android:layout_height="50sp"
                     android:layout_weight="1"
@@ -273,7 +273,7 @@
                     app:srcCompat="@drawable/pilates" />
 
                 <TextView
-                    android:id="@+id/textView8"
+                    android:id="@+id/timer6"
                     android:layout_width="wrap_content"
                     android:layout_height="44dp"
                     android:layout_marginLeft="5sp"
@@ -286,7 +286,7 @@
                     android:textStyle="bold" />
 
                 <Button
-                    android:id="@+id/button7"
+                    android:id="@+id/start6"
                     android:layout_width="wrap_content"
                     android:layout_height="50sp"
                     android:layout_weight="1"
@@ -304,7 +304,7 @@
                     android:layout_width="100sp"
                     android:layout_height="50sp"
                     android:layout_weight="1"
-                    android:text="Stretching"
+                    android:text="Cycling"
                     android:textAlignment="center"
                     android:textColor="#000000"
                     android:textSize="20sp"
@@ -318,7 +318,7 @@
                     app:srcCompat="@drawable/bicycle" />
 
                 <TextView
-                    android:id="@+id/textView8"
+                    android:id="@+id/timer7"
                     android:layout_width="wrap_content"
                     android:layout_height="44dp"
                     android:layout_marginLeft="5sp"
@@ -331,7 +331,7 @@
                     android:textStyle="bold" />
 
                 <Button
-                    android:id="@+id/button7"
+                    android:id="@+id/start7"
                     android:layout_width="wrap_content"
                     android:layout_height="50sp"
                     android:layout_weight="1"
