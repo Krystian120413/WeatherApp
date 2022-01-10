@@ -1,5 +1,6 @@
 package com.project.weatheraplication
 
+import android.annotation.SuppressLint
 import android.content.IntentSender
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -28,50 +29,63 @@ class ExcerciseActivity : AppCompatActivity() {
         val timerButton7 = findViewById<Button>(R.id.start7)
 
         timerButton1.setOnClickListener{
-            startTimeCount(timeCounter1, timerButton1)
+            startTimeCount(timeCounter1, timerButton1, 120000)
         }
         timerButton2.setOnClickListener{
-            startTimeCount(timeCounter2, timerButton2)
+            startTimeCount(timeCounter2, timerButton2, 120000)
         }
         timerButton3.setOnClickListener{
-            startTimeCount(timeCounter3, timerButton3)
+            startTimeCount(timeCounter3, timerButton3, 120000)
         }
         timerButton4.setOnClickListener{
-            startTimeCount(timeCounter4, timerButton4)
+            startTimeCount(timeCounter4, timerButton4, 120000)
         }
         timerButton5.setOnClickListener{
-            startTimeCount(timeCounter5, timerButton5)
+            startTimeCount(timeCounter5, timerButton5, 120000)
         }
         timerButton6.setOnClickListener{
-            startTimeCount(timeCounter6, timerButton6)
+            startTimeCount(timeCounter6, timerButton6, 120000)
         }
         timerButton7.setOnClickListener{
-            startTimeCount(timeCounter7, timerButton7)
+            startTimeCount(timeCounter7, timerButton7, 600000)
         }
     }
     var started = false
-    fun startTimeCount(view: TextView, button: Button){
+    @SuppressLint("SetTextI18n")
+    fun startTimeCount(view: TextView, button: Button, time: Long){
+        val countTime: TextView = view
+        val timer = object : CountDownTimer(time, 1000) {
+            @SuppressLint("SetTextI18n")
+            override fun onTick(millisUntilFinished: Long) {
+                val minute = (millisUntilFinished / 60000)
+                val second =(millisUntilFinished - (minute * 60000)) / 1000
+                val minuteTxt = "0$minute"
+                var seccondTxt = second.toString()
+                if(second < 10) seccondTxt = "0$second"
+                countTime.text = "$minuteTxt:$seccondTxt"
+            }
+
+            @SuppressLint("SetTextI18n")
+            override fun onFinish() {
+                countTime.text = "02:00"
+                started = false
+                button.text = "START"
+            }
+        }
         if(!started) {
             started = true
             button.text = "STOP"
-            button.id = "stop".toInt()
-            val countTime: TextView = view
-            object : CountDownTimer(120000, 1000) {
-                override fun onTick(millisUntilFinished: Long) {
-                    val minute = (millisUntilFinished / 60000)
-                    val second =(millisUntilFinished - (minute * 60000)) / 1000
-                    val minuteTxt = "0" + minute.toString()
-                    var seccondTxt = second.toString()
-                    if(second < 10) seccondTxt = "0" + second.toString()
-                    countTime.text = minuteTxt + ":" + seccondTxt
+            button.setOnClickListener{
+                timer.cancel()
+                started = false
+                button.text = "START"
+                countTime.text = "02:00"
+                if(time.compareTo(600000) == 0) countTime.text = "10:00"
+                button.setOnClickListener{
+                    startTimeCount(view, button, time)
                 }
-
-                override fun onFinish() {
-                    countTime.text = "02:00"
-                    started = false
-                    button.text = "START"
-                }
-            }.start()
+            }
+            timer.start()
         }
     }
 }

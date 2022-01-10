@@ -60,6 +60,8 @@ class MainActivity : AppCompatActivity(),
 
         findViewById<Button>(R.id.checkWeatherBtn).setOnClickListener{
             val intentWF = Intent(this, WeatherForecastActivity::class.java)
+            intentWF.putExtra("latitude", latitude)
+            intentWF.putExtra("longitude", longitude)
             startActivity(intentWF)
         }
 
