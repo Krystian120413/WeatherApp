@@ -13,12 +13,12 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Geocoder
 import android.os.*
-import android.telephony.mbms.MbmsErrors
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.tasks.CancellationTokenSource
+import okhttp3.*
 import java.io.*
 import java.net.InetAddress
 import com.project.weatheraplication.LocationDialog as dialog
@@ -52,6 +52,7 @@ class MainActivity : AppCompatActivity(),
         else {
             println("niemaneta")
         }
+//        openDialog()
 
         findViewById<ImageButton>(R.id.excerciseBtn).setOnClickListener{
             val intentEx = Intent(this, ExcerciseActivity::class.java)
@@ -69,8 +70,8 @@ class MainActivity : AppCompatActivity(),
             val intentSetting = Intent(this, SettingsActivity::class.java)
             intentSetting.putExtra("Address", findViewById<TextView>(R.id.address).text)
             startActivity(intentSetting)
-            //SendNotification(this).createNotificationChannel()
-            //openDialog()
+//            SendNotification(this).createNotificationChannel()
+//            openDialog()
         }
     }
 
@@ -155,15 +156,46 @@ class MainActivity : AppCompatActivity(),
                     }
                 }
             } catch (e: UninitializedPropertyAccessException) {
-                weatherApi = "https://api.openweathermap.org/data/2.5/weather?q=$city&appid=$api&units=metric"
-                aqiApi = "https://api.waqi.info/feed/$city/?token=$aqiToken"
+                if(!city.contains(',')) {
+                    weatherApi = "https://api.openweathermap.org/data/2.5/weather?q=$city&appid=$api&units=metric"
+                    aqiApi = "https://api.waqi.info/feed/$city/?token=$aqiToken"
+                } else {
+                    val zip = city.replace(Regex("[, ]+"), ",").split(',')
+                    weatherApi = "https://api.openweathermap.org/data/2.5/weather?zip=${zip[0]},${zip[1]}&appid=$api&units=metric"
+
+                    val client = OkHttpClient()
+                    getCity(weatherApi, client)
+
+                    do {
+                        aqiApi = "https://api.waqi.info/feed/geo:$latitude;$longitude/?token=$aqiToken"
+                        Thread.sleep(150)
+                    } while (city.contains(','))
+                }
 
                 WeatherTask().execute()
             }
         }
-        /*else {
-            readLastLocation()
-        }*/
+    }
+
+    private fun getCity(url : String, client : OkHttpClient) {
+        val request = Request.Builder()
+            .url(url)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {}
+            override fun onResponse(call: Call, response: Response) {
+                val jobj = JSONObject(response.body()!!.string())
+                longitude = jobj.getJSONObject("coord").getDouble("lon")
+                latitude = jobj.getJSONObject("coord").getDouble("lat")
+                aqiApi = "https://api.waqi.info/feed/geo:$latitude;$longitude/?token=$aqiToken"
+                city = jobj.getString("name")
+            }
+        })
+
+//        val result = JSONObject(response)
+//        var name = result.getString("name")
+//        return "https://api.waqi.info/feed/$name/?token=$aqiToken"
     }
 
     @SuppressLint("StaticFieldLeak")

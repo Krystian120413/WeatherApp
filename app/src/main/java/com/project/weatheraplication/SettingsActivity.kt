@@ -1,13 +1,27 @@
 package com.project.weatheraplication
 
 import android.annotation.SuppressLint
+import android.content.res.ColorStateList
+import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.TypedValue
+import android.view.Gravity
+import android.view.Gravity.*
+import android.view.View
+import android.view.View.TEXT_ALIGNMENT_CENTER
+import android.view.ViewGroup
+import android.view.ViewGroup.LayoutParams.*
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.TextView
+import androidx.core.view.setMargins
+import androidx.core.view.setPadding
 import java.io.*
+import android.widget.RelativeLayout
+import androidx.core.graphics.drawable.DrawableCompat
+import androidx.core.view.ViewCompat.setBackgroundTintList
 
 class SettingsActivity : AppCompatActivity(), LocationDialog.LocationDialogListener {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,32 +58,102 @@ class SettingsActivity : AppCompatActivity(), LocationDialog.LocationDialogListe
     private fun appendLayouts(cities: List<String>) {
         val mainll = findViewById<LinearLayout>(R.id.main_llayout)
         for ((n, i) in cities.withIndex()) {
-            val new_ll = LinearLayout(this)
-            new_ll.id = n
-            new_ll.orientation = LinearLayout.VERTICAL
-            new_ll.setBackgroundColor(getColor(R.color.green))
 
-            val new_llh = LinearLayout(this)
-            new_llh.orientation = LinearLayout.HORIZONTAL
+            val newLl = LinearLayout(this)
+
+            newLl.id = n
+            newLl.orientation = LinearLayout.VERTICAL
+            newLl.setBackgroundColor(Color.parseColor("#c4c4c4"))
+
+            val newLlh = LinearLayout(this)
+            newLlh.orientation = LinearLayout.HORIZONTAL
 
             val changeButton = Button(this)
             val removeButton = Button(this)
 
+            removeButton.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#ff6363"))
+
+            changeButton.setPadding(
+                TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 6f, resources.displayMetrics)
+                    .toInt())
+
+            removeButton.setPadding(
+                TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 6f, resources.displayMetrics)
+                    .toInt())
+
             changeButton.text = "Change"
             removeButton.text = "Remove"
 
-            new_llh.addView(changeButton)
-            new_llh.addView(removeButton)
+            changeButton.setTextColor(Color.BLACK)
+            removeButton.setTextColor(Color.BLACK)
 
-            val new_tw = TextView(this)
-            new_tw.text = i
-            new_tw.setTextColor(getColor(R.color.black))
-            new_tw.textSize = 20F
+            newLlh.addView(changeButton)
 
-            new_ll.addView(new_tw)
-            new_ll.addView(new_llh)
+            val viewDivider = View(this)
+            val dividerWidth = resources.displayMetrics.density * 10
+            viewDivider.layoutParams = RelativeLayout.LayoutParams(dividerWidth.toInt(), WRAP_CONTENT)
 
-            mainll.addView(new_ll)
+            newLlh.addView(viewDivider)
+            newLlh.addView(removeButton)
+
+            val newTw = TextView(this)
+            newTw.text = i
+            newTw.setTextColor(getColor(R.color.black))
+            newTw.textSize = 20F
+            newTw.textAlignment = TEXT_ALIGNMENT_CENTER
+
+            newLl.addView(newTw)
+            newLl.addView(newLlh)
+
+            mainll.addView(newLl)
+
+            newLlh.layoutParams.width = MATCH_PARENT
+            newLlh.layoutParams.height = MATCH_PARENT
+            newLlh.gravity = CENTER
+
+            // Text View params
+
+            var params = newTw.layoutParams as ViewGroup.MarginLayoutParams
+            params.setMargins(
+                TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5f, resources.displayMetrics)
+                    .toInt()
+            )
+            newTw.layoutParams = params
+
+            // Linear Layout params
+
+            params = newLl.layoutParams as ViewGroup.MarginLayoutParams
+            params.setMargins(
+                TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 6f, resources.displayMetrics)
+                .toInt()
+            )
+
+            params.width = MATCH_PARENT
+            params.height = MATCH_PARENT
+
+            newLl.layoutParams = params
+            newLl.gravity = CENTER
+
+            params = newLlh.layoutParams as ViewGroup.MarginLayoutParams
+            params.setMargins(
+                TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 6f, resources.displayMetrics)
+                    .toInt()
+            )
+            newLlh.layoutParams = params
+
+            // Button params
+
+            params = changeButton.layoutParams as ViewGroup.MarginLayoutParams
+            params.setMargins(
+                TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 6f, resources.displayMetrics)
+                    .toInt()
+            )
+            changeButton.layoutParams = params
+            removeButton.layoutParams = params
+
+            changeButton.layoutParams = LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT, 1F)
+            removeButton.layoutParams = LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT, 1F)
+
         }
     }
 

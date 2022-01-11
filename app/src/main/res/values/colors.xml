@@ -15,4 +15,5 @@
     <color name="orange">#CF8908</color>
     <color name="red">#bd0404</color>
     <color name="bad">#3d0101</color>
+    <color name="lightred">#ff6363</color>
 </resources>

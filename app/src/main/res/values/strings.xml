@@ -2,6 +2,7 @@
     <string name="app_name">WeatherAplication</string>
     <string name="sunrise">Sunrise</string>
     <string name="city">No location</string>
+    <string name="no_location">City name or zip and country code</string>
     <string name="pressure">Pressure</string>
     <string name="wind">Wind</string>
     <string name="sunset">Sunset</string>
