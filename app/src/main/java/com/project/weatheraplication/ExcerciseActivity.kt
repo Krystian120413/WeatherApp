@@ -2,6 +2,7 @@ package com.project.weatheraplication
 
 import android.annotation.SuppressLint
 import android.content.IntentSender
+import android.media.MediaPlayer
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.CountDownTimer
@@ -9,6 +10,9 @@ import android.widget.Button
 import android.widget.TextView
 
 class ExcerciseActivity : AppCompatActivity() {
+
+    var mMediaPlayer: MediaPlayer? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_excercise)
@@ -75,8 +79,12 @@ class ExcerciseActivity : AppCompatActivity() {
         if(!started) {
             started = true
             button.text = "STOP"
+
+            playMusic()
+
             button.setOnClickListener{
                 timer.cancel()
+                stopMusic()
                 started = false
                 button.text = "START"
                 countTime.text = "02:00"
@@ -86,6 +94,32 @@ class ExcerciseActivity : AppCompatActivity() {
                 }
             }
             timer.start()
+        }
+    }
+
+    fun playMusic(){
+        if(mMediaPlayer == null){
+            mMediaPlayer= MediaPlayer.create(this, R.raw.krzysztof_krawczyk_parostatek)
+            mMediaPlayer!!.isLooping = true
+            mMediaPlayer!!.start()
+        }
+        else
+            mMediaPlayer!!.start()
+    }
+
+    fun stopMusic(){
+        if(mMediaPlayer != null){
+            mMediaPlayer!!.stop()
+            mMediaPlayer!!.release()
+            mMediaPlayer = null
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        if(mMediaPlayer != null){
+            mMediaPlayer!!.release()
+            mMediaPlayer = null
         }
     }
 }
