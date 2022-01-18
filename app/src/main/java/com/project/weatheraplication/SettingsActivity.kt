@@ -62,14 +62,6 @@ class SettingsActivity : AppCompatActivity(), LocationDialog.LocationDialogListe
         openDialog()
     }
 
-    private fun removeLocationButton(v : View) {
-        println(v.tag)
-    }
-    private fun changeLocationButton(v : View) {
-        findViewById<LinearLayout>(R.id.locationLayout1).removeAllViews()
-        findViewById<ScrollView>(R.id.scrollView2).removeView(findViewById<LinearLayout>(R.id.locationLayout1))
-    }
-
     private fun openDialog() {
         val locationDialog = LocationDialog()
         locationDialog.show(supportFragmentManager, "example dialog")
@@ -266,9 +258,6 @@ class SettingsActivity : AppCompatActivity(), LocationDialog.LocationDialogListe
     private fun getCity(city : String, client : OkHttpClient) {
         val zip = city.replace(Regex("[, ]+"), ",").split(',')
         val api = "79aaa968a0069d0b93d757ed27fea018"
-//        val url1 = "https://api.openweathermap.org/data/2.5/weather?q=$city&appid=$api&units=metric"
-//        val url2 = "https://api.openweathermap.org/data/2.5/weather?zip=${zip[0]},${zip[1]}&appid=$api&units=metric"
-        println(zip.size)
         val url = if (city.contains(','))
             "https://api.openweathermap.org/data/2.5/weather?zip=${zip[0]},${zip[1]}&appid=$api&units=metric"
         else
@@ -307,7 +296,6 @@ class SettingsActivity : AppCompatActivity(), LocationDialog.LocationDialogListe
             deleteLocation(v?.tag.toString().last())
         }
         if(v?.tag.toString().startsWith('c')) {
-            val view = v?.parent?.parent as ViewGroup
             changeLocation(v?.tag.toString().last())
         }
     }
@@ -315,8 +303,8 @@ class SettingsActivity : AppCompatActivity(), LocationDialog.LocationDialogListe
     private fun changeLocation(n : Char) {
         try {
             val fIn = BufferedReader(FileReader("/data/data/com.project.weatheraplication/files/savedLocations.txt"))
-            var longitude: Double = 0.0
-            var latitude: Double = 0.0
+            var longitude = 0.0
+            var latitude = 0.0
 
             var nlines = 0
             var currentline = fIn.readLine()
@@ -349,7 +337,7 @@ class SettingsActivity : AppCompatActivity(), LocationDialog.LocationDialogListe
         try {
 
             val fIn = BufferedReader(FileReader("/data/data/com.project.weatheraplication/files/savedLocations.txt"))
-            var lines: String = ""
+            var lines = ""
 
             var nlines = 0
             var currentline = fIn.readLine()

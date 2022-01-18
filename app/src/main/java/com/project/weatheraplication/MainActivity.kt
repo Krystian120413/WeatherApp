@@ -60,7 +60,6 @@ class MainActivity : AppCompatActivity(),
                 println("niemaneta")
             }
         }
-//        openDialog()
 
         findViewById<ImageButton>(R.id.excerciseBtn).setOnClickListener{
             val intentEx = Intent(this, ExcerciseActivity::class.java)
@@ -80,8 +79,6 @@ class MainActivity : AppCompatActivity(),
             intentSetting.putExtra("Longitude", longitude)
             intentSetting.putExtra("Latitude", latitude)
             startActivity(intentSetting)
-//            SendNotification(this).createNotificationChannel()
-//            openDialog()
         }
     }
 
@@ -202,10 +199,6 @@ class MainActivity : AppCompatActivity(),
                 city = jobj.getString("name")
             }
         })
-
-//        val result = JSONObject(response)
-//        var name = result.getString("name")
-//        return "https://api.waqi.info/feed/$name/?token=$aqiToken"
     }
 
     @SuppressLint("StaticFieldLeak")
