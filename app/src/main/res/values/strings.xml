@@ -20,4 +20,5 @@
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
     <string name="inputCityName">Input city name</string>
+    <string name="find">Add</string>
 </resources>

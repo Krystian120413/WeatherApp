@@ -7,7 +7,7 @@
     tools:context=".SettingsActivity">
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/addLocation"
+        android:id="@+id/resetLocation"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:backgroundTint="#27B822"
@@ -29,7 +29,8 @@
         app:layout_constraintVertical_bias="0.95"
         app:pressedTranslationZ="6dp"
         app:rippleColor="#000000"
-        app:srcCompat="@android:drawable/ic_menu_mylocation" />
+        app:srcCompat="@android:drawable/ic_menu_mylocation"
+        tools:ignore="SpeakableTextPresentCheck" />
 
     <ScrollView
         android:id="@+id/scrollView2"
@@ -57,6 +58,15 @@
                 android:textAllCaps="true"
                 android:textColor="@color/black"
                 android:textSize="20dp" />
+
+            <Button
+                android:id="@+id/addLocation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0"
+                android:backgroundTint="#33BD3A"
+                android:text="@string/find"
+                android:textColor="#000000" />
 
             <LinearLayout
                 android:layout_width="match_parent"

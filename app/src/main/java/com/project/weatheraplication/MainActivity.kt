@@ -42,15 +42,23 @@ class MainActivity : AppCompatActivity(),
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        if(getPermissions() && isInternetAvailable()){
-            fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
-            getLocation()
-        }
-        else if (isInternetAvailable()){
-            openDialog()
+
+        if(intent.getDoubleExtra("Longitude", -9999.0) != -9999.0) {
+            longitude = intent.getDoubleExtra("Longitude", 0.0)
+            latitude = intent.getDoubleExtra("Latitude", 0.0)
+            weatherApi = "https://api.openweathermap.org/data/2.5/weather?lat=$latitude&lon=$longitude&appid=$api&units=metric"
+            aqiApi = "https://api.waqi.info/feed/geo:$latitude;$longitude/?token=$aqiToken"
+            WeatherTask().execute()
         }
         else {
-            println("niemaneta")
+            if (getPermissions() && isInternetAvailable()) {
+                fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+                getLocation()
+            } else if (isInternetAvailable()) {
+                openDialog()
+            } else {
+                println("niemaneta")
+            }
         }
 //        openDialog()
 
@@ -69,6 +77,8 @@ class MainActivity : AppCompatActivity(),
         findViewById<ImageButton>(R.id.settingBtn).setOnClickListener{
             val intentSetting = Intent(this, SettingsActivity::class.java)
             intentSetting.putExtra("Address", findViewById<TextView>(R.id.address).text)
+            intentSetting.putExtra("Longitude", longitude)
+            intentSetting.putExtra("Latitude", latitude)
             startActivity(intentSetting)
 //            SendNotification(this).createNotificationChannel()
 //            openDialog()

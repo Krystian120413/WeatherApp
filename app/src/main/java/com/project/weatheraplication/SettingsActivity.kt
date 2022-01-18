@@ -1,10 +1,12 @@
 package com.project.weatheraplication
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Looper
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.Gravity.*
@@ -12,35 +14,58 @@ import android.view.View
 import android.view.View.TEXT_ALIGNMENT_CENTER
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.*
-import android.widget.Button
-import android.widget.LinearLayout
-import android.widget.ScrollView
-import android.widget.TextView
+import android.widget.*
 import androidx.core.view.setMargins
 import androidx.core.view.setPadding
 import java.io.*
-import android.widget.RelativeLayout
 import androidx.core.graphics.drawable.DrawableCompat
+import androidx.core.util.rangeTo
 import androidx.core.view.ViewCompat.setBackgroundTintList
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import okhttp3.*
+import org.json.JSONException
+import org.json.JSONObject
+import kotlin.properties.Delegates
 
-class SettingsActivity : AppCompatActivity(), LocationDialog.LocationDialogListener {
+private var cities: List<String> = mutableListOf()
+private var size by Delegates.notNull<Int>()
+
+class SettingsActivity : AppCompatActivity(), LocationDialog.LocationDialogListener, View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
         val address = intent.getStringExtra("Address")
-        writeLocation()
-        val cities = readSavedLocations()
+        val longitude = intent.getDoubleExtra("Longitude", 0.0)
+        val latitude = intent.getDoubleExtra("Latitude", 0.0)
+        cities = readSavedLocations()
+        size = cities.size
         appendLayouts(cities)
-        //findViewById<TextView>(R.id.currentLocation).text = address
-        //findViewById<FloatingActionButton>(R.id.addLocation).setOnClickListener{addLocationButton()}
-        //findViewById<Button>(R.id.removeLocation1).setOnClickListener{removeLocationButton()}
+        findViewById<TextView>(R.id.currentLocation).text = address
+
+        findViewById<FloatingActionButton>(R.id.resetLocation).setOnClickListener{
+            finish()
+            val main = Intent(this, MainActivity::class.java)
+            startActivity(main)
+        }
+
+        findViewById<Button>(R.id.addLocation).setOnClickListener{addLocationButton()}
+        findViewById<Button>(R.id.saveLocation).setOnClickListener{
+            val lon = longitude.toString()
+            val lat = latitude.toString()
+            cities += mutableListOf("$address, $lon, $lat")
+            writeLocation()
+            appendLayouts(mutableListOf(cities.last()))
+        }
     }
 
     private fun addLocationButton() {
         openDialog()
     }
 
-    private fun removeLocationButton() {
+    private fun removeLocationButton(v : View) {
+        println(v.tag)
+    }
+    private fun changeLocationButton(v : View) {
         findViewById<LinearLayout>(R.id.locationLayout1).removeAllViews()
         findViewById<ScrollView>(R.id.scrollView2).removeView(findViewById<LinearLayout>(R.id.locationLayout1))
     }
@@ -52,108 +77,148 @@ class SettingsActivity : AppCompatActivity(), LocationDialog.LocationDialogListe
 
     @SuppressLint("ResourceType")
     override fun applyText(city: String) {
-        findViewById<TextView>(R.id.savedLocation1).text = city
+        if (city.isNotBlank() && city.isNotEmpty()) {
+            getCity(city, OkHttpClient())
+            Thread.sleep(250)
+            appendLayouts(mutableListOf(cities.last()))
+        }
     }
 
     private fun appendLayouts(cities: List<String>) {
         val mainll = findViewById<LinearLayout>(R.id.main_llayout)
         for ((n, i) in cities.withIndex()) {
+            if (i.isNotEmpty() && i.isNotBlank()) {
+                val newLl = LinearLayout(this)
 
-            val newLl = LinearLayout(this)
+                newLl.id = n
+                newLl.tag = "layout$n"
+                newLl.orientation = LinearLayout.VERTICAL
+                newLl.setBackgroundColor(Color.parseColor("#c4c4c4"))
 
-            newLl.id = n
-            newLl.orientation = LinearLayout.VERTICAL
-            newLl.setBackgroundColor(Color.parseColor("#c4c4c4"))
+                val newLlh = LinearLayout(this)
+                newLlh.orientation = LinearLayout.HORIZONTAL
 
-            val newLlh = LinearLayout(this)
-            newLlh.orientation = LinearLayout.HORIZONTAL
+                val changeButton = Button(this)
+                changeButton.tag = "changeButton$n"
+                val removeButton = Button(this)
+                removeButton.tag = "removeButton$n"
 
-            val changeButton = Button(this)
-            val removeButton = Button(this)
+                removeButton.backgroundTintList =
+                    ColorStateList.valueOf(Color.parseColor("#ff6363"))
 
-            removeButton.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#ff6363"))
+                changeButton.setPadding(
+                    TypedValue.applyDimension(
+                        TypedValue.COMPLEX_UNIT_DIP,
+                        6f,
+                        resources.displayMetrics
+                    )
+                        .toInt()
+                )
 
-            changeButton.setPadding(
-                TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 6f, resources.displayMetrics)
-                    .toInt())
+                removeButton.setPadding(
+                    TypedValue.applyDimension(
+                        TypedValue.COMPLEX_UNIT_DIP,
+                        6f,
+                        resources.displayMetrics
+                    )
+                        .toInt()
+                )
 
-            removeButton.setPadding(
-                TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 6f, resources.displayMetrics)
-                    .toInt())
+                changeButton.text = "Change"
+                removeButton.text = "Remove"
 
-            changeButton.text = "Change"
-            removeButton.text = "Remove"
+                changeButton.setTextColor(Color.BLACK)
+                removeButton.setTextColor(Color.BLACK)
 
-            changeButton.setTextColor(Color.BLACK)
-            removeButton.setTextColor(Color.BLACK)
+                newLlh.addView(changeButton)
 
-            newLlh.addView(changeButton)
+                val viewDivider = View(this)
+                val dividerWidth = resources.displayMetrics.density * 10
+                viewDivider.layoutParams =
+                    RelativeLayout.LayoutParams(dividerWidth.toInt(), WRAP_CONTENT)
 
-            val viewDivider = View(this)
-            val dividerWidth = resources.displayMetrics.density * 10
-            viewDivider.layoutParams = RelativeLayout.LayoutParams(dividerWidth.toInt(), WRAP_CONTENT)
+                newLlh.addView(viewDivider)
+                newLlh.addView(removeButton)
 
-            newLlh.addView(viewDivider)
-            newLlh.addView(removeButton)
+                val newTw = TextView(this)
+                newTw.text = i
+                newTw.setTextColor(getColor(R.color.black))
+                newTw.textSize = 20F
+                newTw.textAlignment = TEXT_ALIGNMENT_CENTER
 
-            val newTw = TextView(this)
-            newTw.text = i
-            newTw.setTextColor(getColor(R.color.black))
-            newTw.textSize = 20F
-            newTw.textAlignment = TEXT_ALIGNMENT_CENTER
+                newLl.addView(newTw)
+                newLl.addView(newLlh)
 
-            newLl.addView(newTw)
-            newLl.addView(newLlh)
+                mainll.addView(newLl)
 
-            mainll.addView(newLl)
+                newLlh.layoutParams.width = MATCH_PARENT
+                newLlh.layoutParams.height = MATCH_PARENT
+                newLlh.gravity = CENTER
 
-            newLlh.layoutParams.width = MATCH_PARENT
-            newLlh.layoutParams.height = MATCH_PARENT
-            newLlh.gravity = CENTER
+                // Text View params
 
-            // Text View params
+                var params = newTw.layoutParams as ViewGroup.MarginLayoutParams
+                params.setMargins(
+                    TypedValue.applyDimension(
+                        TypedValue.COMPLEX_UNIT_DIP,
+                        5f,
+                        resources.displayMetrics
+                    )
+                        .toInt()
+                )
+                newTw.layoutParams = params
 
-            var params = newTw.layoutParams as ViewGroup.MarginLayoutParams
-            params.setMargins(
-                TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5f, resources.displayMetrics)
-                    .toInt()
-            )
-            newTw.layoutParams = params
+                // Linear Layout params
 
-            // Linear Layout params
+                params = newLl.layoutParams as ViewGroup.MarginLayoutParams
+                params.setMargins(
+                    TypedValue.applyDimension(
+                        TypedValue.COMPLEX_UNIT_DIP,
+                        6f,
+                        resources.displayMetrics
+                    )
+                        .toInt()
+                )
 
-            params = newLl.layoutParams as ViewGroup.MarginLayoutParams
-            params.setMargins(
-                TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 6f, resources.displayMetrics)
-                .toInt()
-            )
+                params.width = MATCH_PARENT
+                params.height = MATCH_PARENT
 
-            params.width = MATCH_PARENT
-            params.height = MATCH_PARENT
+                newLl.layoutParams = params
+                newLl.gravity = CENTER
 
-            newLl.layoutParams = params
-            newLl.gravity = CENTER
+                params = newLlh.layoutParams as ViewGroup.MarginLayoutParams
+                params.setMargins(
+                    TypedValue.applyDimension(
+                        TypedValue.COMPLEX_UNIT_DIP,
+                        6f,
+                        resources.displayMetrics
+                    )
+                        .toInt()
+                )
+                newLlh.layoutParams = params
 
-            params = newLlh.layoutParams as ViewGroup.MarginLayoutParams
-            params.setMargins(
-                TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 6f, resources.displayMetrics)
-                    .toInt()
-            )
-            newLlh.layoutParams = params
+                // Button params
 
-            // Button params
+                params = changeButton.layoutParams as ViewGroup.MarginLayoutParams
+                params.setMargins(
+                    TypedValue.applyDimension(
+                        TypedValue.COMPLEX_UNIT_DIP,
+                        6f,
+                        resources.displayMetrics
+                    )
+                        .toInt()
+                )
+                changeButton.layoutParams = params
+                removeButton.layoutParams = params
 
-            params = changeButton.layoutParams as ViewGroup.MarginLayoutParams
-            params.setMargins(
-                TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 6f, resources.displayMetrics)
-                    .toInt()
-            )
-            changeButton.layoutParams = params
-            removeButton.layoutParams = params
+                changeButton.layoutParams =
+                    LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT, 1F)
+                removeButton.layoutParams =
+                    LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT, 1F)
 
-            changeButton.layoutParams = LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT, 1F)
-            removeButton.layoutParams = LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT, 1F)
-
+                removeButton.setOnClickListener(this)
+                changeButton.setOnClickListener(this)
+            }
         }
     }
 
@@ -163,8 +228,10 @@ class SettingsActivity : AppCompatActivity(), LocationDialog.LocationDialogListe
             MODE_PRIVATE
         )
         val osw = OutputStreamWriter(fOut)
-        osw.write("Rzeszów\nKraków\nBerlin")
-        osw.flush()
+        for (i in cities) {
+            osw.write(i+"\n")
+            osw.flush()
+        }
         osw.close()
         fOut.close()
     }
@@ -181,7 +248,125 @@ class SettingsActivity : AppCompatActivity(), LocationDialog.LocationDialogListe
 
             cities
         } catch (e: FileNotFoundException) {
+            val fOut: FileOutputStream = openFileOutput(
+                "savedLocations.txt",
+                MODE_PRIVATE
+            )
+            fOut.close()
             emptyList()
+        }
+    }
+
+    fun message(e : String) {
+        this.runOnUiThread {
+            Toast.makeText(applicationContext, e, Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun getCity(city : String, client : OkHttpClient) {
+        val zip = city.replace(Regex("[, ]+"), ",").split(',')
+        val api = "79aaa968a0069d0b93d757ed27fea018"
+//        val url1 = "https://api.openweathermap.org/data/2.5/weather?q=$city&appid=$api&units=metric"
+//        val url2 = "https://api.openweathermap.org/data/2.5/weather?zip=${zip[0]},${zip[1]}&appid=$api&units=metric"
+        println(zip.size)
+        val url = if (city.contains(','))
+            "https://api.openweathermap.org/data/2.5/weather?zip=${zip[0]},${zip[1]}&appid=$api&units=metric"
+        else
+            "https://api.openweathermap.org/data/2.5/weather?q=$city&appid=$api&units=metric"
+
+        val request = Request.Builder()
+            .url(url)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                message("HTTP Request Error")
+            }
+            override fun onResponse(call: Call, response: Response) {
+                val jobj = JSONObject(response.body()!!.string())
+                try {
+                    val info = jobj.getString("name") + ", " +
+                            jobj.getJSONObject("sys").getString("country") + ", " +
+                            jobj.getJSONObject("coord").getDouble("lon").toString() + ", " +
+                            jobj.getJSONObject("coord").getDouble("lat").toString()
+                    cities += info
+                    writeLocation()
+                } catch (e: JSONException) {
+                    message("Couldn't find the city")
+                }
+
+            }
+        })
+    }
+
+    override fun onClick(v: View?) {
+        if(v?.tag.toString().startsWith('r')) {
+            val view = v?.parent?.parent as ViewGroup
+            view.removeView(view)
+            view.removeAllViews()
+            deleteLocation(v?.tag.toString().last())
+        }
+        if(v?.tag.toString().startsWith('c')) {
+            val view = v?.parent?.parent as ViewGroup
+            changeLocation(v?.tag.toString().last())
+        }
+    }
+
+    private fun changeLocation(n : Char) {
+        try {
+            val fIn = BufferedReader(FileReader("/data/data/com.project.weatheraplication/files/savedLocations.txt"))
+            var longitude: Double = 0.0
+            var latitude: Double = 0.0
+
+            var nlines = 0
+            var currentline = fIn.readLine()
+
+
+            while (currentline != null) {
+                if (nlines == n.digitToInt()) {
+                    longitude = currentline.replace(Regex("[, ]+"), ",").split(',')[2].toDouble()
+                    latitude = currentline.replace(Regex("[, ]+"), ",").split(',')[3].toDouble()
+
+                    break
+                }
+                nlines++
+                currentline = fIn.readLine()
+            }
+            fIn.close()
+
+            val intentMain = Intent(this, MainActivity::class.java)
+            intentMain.putExtra("Longitude", longitude)
+            intentMain.putExtra("Latitude", latitude)
+            finish()
+            startActivity(intentMain)
+
+        } catch (e: FileNotFoundException) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun deleteLocation(n : Char) {
+        try {
+
+            val fIn = BufferedReader(FileReader("/data/data/com.project.weatheraplication/files/savedLocations.txt"))
+            var lines: String = ""
+
+            var nlines = 0
+            var currentline = fIn.readLine()
+            while (currentline != null) {
+                if (nlines != n.digitToInt()) {
+                    lines += currentline
+                }
+                nlines++
+                currentline = fIn.readLine()
+            }
+            fIn.close()
+
+            cities = mutableListOf(lines)
+
+            writeLocation()
+        } catch (e: FileNotFoundException) {
+            e.printStackTrace()
         }
     }
 }
