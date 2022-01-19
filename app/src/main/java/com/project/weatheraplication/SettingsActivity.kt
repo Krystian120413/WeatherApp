@@ -48,13 +48,18 @@ class SettingsActivity : AppCompatActivity(), LocationDialog.LocationDialogListe
             startActivity(main)
         }
 
-        findViewById<Button>(R.id.addLocation).setOnClickListener{addLocationButton()}
+        findViewById<Button>(R.id.addLocation).setOnClickListener{
+            addLocationButton()
+        }
         findViewById<Button>(R.id.saveLocation).setOnClickListener{
             val lon = longitude.toString()
             val lat = latitude.toString()
-            cities += mutableListOf("$address, $lon, $lat")
+
+            cities += listOf("$address, $lon, $lat")
+
             writeLocation()
-            appendLayouts(mutableListOf(cities.last()))
+            finish()
+            startActivity(intent)
         }
     }
 
@@ -71,9 +76,11 @@ class SettingsActivity : AppCompatActivity(), LocationDialog.LocationDialogListe
     override fun applyText(city: String) {
         if (city.isNotBlank() && city.isNotEmpty()) {
             getCity(city, OkHttpClient())
-            Thread.sleep(250)
-            appendLayouts(mutableListOf(cities.last()))
+            Thread.sleep(170)
         }
+
+        finish()
+        startActivity(intent)
     }
 
     private fun appendLayouts(cities: List<String>) {
@@ -221,11 +228,11 @@ class SettingsActivity : AppCompatActivity(), LocationDialog.LocationDialogListe
         )
         val osw = OutputStreamWriter(fOut)
         for (i in cities) {
-            osw.write(i+"\n")
+            osw.write("$i\n")
             osw.flush()
         }
-        osw.close()
         fOut.close()
+        osw.close()
     }
 
     @SuppressLint("SetTextI18n")
@@ -235,10 +242,11 @@ class SettingsActivity : AppCompatActivity(), LocationDialog.LocationDialogListe
             val isr = InputStreamReader(fIn)
 
             val cities = isr.readText().split("\n")
-            isr.close()
             fIn.close()
+            isr.close()
 
-            cities
+            if(cities[0].isNullOrBlank()) emptyList()
+            else cities
         } catch (e: FileNotFoundException) {
             val fOut: FileOutputStream = openFileOutput(
                 "savedLocations.txt",
@@ -335,24 +343,34 @@ class SettingsActivity : AppCompatActivity(), LocationDialog.LocationDialogListe
 
     private fun deleteLocation(n : Char) {
         try {
+            println(n)
+            val fOut = File("/data/data/com.project.weatheraplication/files/temp.txt")
+            val fOutWriter = BufferedWriter(FileWriter(fOut))
 
-            val fIn = BufferedReader(FileReader("/data/data/com.project.weatheraplication/files/savedLocations.txt"))
-            var lines = ""
+            val fIn = File("/data/data/com.project.weatheraplication/files/savedLocations.txt")
+            val fInReader = BufferedReader(FileReader(fIn))
 
             var nlines = 0
-            var currentline = fIn.readLine()
-            while (currentline != null) {
+            var currentline = fInReader.readLine()
+
+            while (currentline != "" && currentline != null) {
                 if (nlines != n.digitToInt()) {
-                    lines += currentline
+                    fOutWriter.write("$currentline\n")
+                    fOutWriter.flush()
                 }
                 nlines++
-                currentline = fIn.readLine()
+                currentline = fInReader.readLine()
             }
-            fIn.close()
+            fInReader.close()
+            fOutWriter.close()
 
-            cities = mutableListOf(lines)
+            fOut.renameTo(fIn)
+            fOut.delete()
 
-            writeLocation()
+            cities = readSavedLocations()
+
+            finish()
+            startActivity(intent)
         } catch (e: FileNotFoundException) {
             e.printStackTrace()
         }
