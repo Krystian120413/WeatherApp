@@ -27,8 +27,7 @@ import org.json.JSONException
 import org.json.JSONObject
 import kotlin.properties.Delegates
 
-private var cities: List<String> = mutableListOf()
-private var size by Delegates.notNull<Int>()
+private var cities: List<String> = listOf<String>()
 
 class SettingsActivity : AppCompatActivity(), LocationDialog.LocationDialogListener, View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,9 +36,11 @@ class SettingsActivity : AppCompatActivity(), LocationDialog.LocationDialogListe
         val address = intent.getStringExtra("Address")
         val longitude = intent.getDoubleExtra("Longitude", 0.0)
         val latitude = intent.getDoubleExtra("Latitude", 0.0)
+
         cities = readSavedLocations()
-        size = cities.size
+
         appendLayouts(cities)
+
         findViewById<TextView>(R.id.currentLocation).text = address
 
         findViewById<FloatingActionButton>(R.id.resetLocation).setOnClickListener{
@@ -222,17 +223,18 @@ class SettingsActivity : AppCompatActivity(), LocationDialog.LocationDialogListe
     }
 
     private fun writeLocation() {
-        val fOut: FileOutputStream = openFileOutput(
-            "savedLocations.txt",
-            MODE_PRIVATE
-        )
-        val osw = OutputStreamWriter(fOut)
+        val fOut = File("/data/data/com.project.weatheraplication/files/savedLocations.txt")
+        val fos = FileOutputStream(fOut)
+        val writer = BufferedWriter(OutputStreamWriter(fos))
+
         for (i in cities) {
-            osw.write("$i\n")
-            osw.flush()
+            if(i.isNotEmpty() && i.isNotBlank()) {
+                writer.appendLine(i)
+                writer.flush()
+            }
         }
-        fOut.close()
-        osw.close()
+
+        writer.close()
     }
 
     @SuppressLint("SetTextI18n")
@@ -320,8 +322,8 @@ class SettingsActivity : AppCompatActivity(), LocationDialog.LocationDialogListe
 
             while (currentline != null) {
                 if (nlines == n.digitToInt()) {
-                    longitude = currentline.replace(Regex("[, ]+"), ",").split(',')[2].toDouble()
-                    latitude = currentline.replace(Regex("[, ]+"), ",").split(',')[3].toDouble()
+                    longitude = currentline.replace(Regex("[, a-zA-Z]+"), " ").split(" ")[1].toDouble()
+                    latitude = currentline.replace(Regex("[, a-zA-Z]+"), " ").split(" ")[2].toDouble()
 
                     break
                 }
@@ -343,7 +345,6 @@ class SettingsActivity : AppCompatActivity(), LocationDialog.LocationDialogListe
 
     private fun deleteLocation(n : Char) {
         try {
-            println(n)
             val fOut = File("/data/data/com.project.weatheraplication/files/temp.txt")
             val fOutWriter = BufferedWriter(FileWriter(fOut))
 
@@ -352,6 +353,9 @@ class SettingsActivity : AppCompatActivity(), LocationDialog.LocationDialogListe
 
             var nlines = 0
             var currentline = fInReader.readLine()
+
+            println(n)
+            println(currentline)
 
             while (currentline != "" && currentline != null) {
                 if (nlines != n.digitToInt()) {
