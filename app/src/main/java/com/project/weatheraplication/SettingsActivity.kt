@@ -322,8 +322,8 @@ class SettingsActivity : AppCompatActivity(), LocationDialog.LocationDialogListe
 
             while (currentline != null) {
                 if (nlines == n.digitToInt()) {
-                    longitude = currentline.replace(Regex("[, a-zA-Z]+"), " ").split(" ")[1].toDouble()
-                    latitude = currentline.replace(Regex("[, a-zA-Z]+"), " ").split(" ")[2].toDouble()
+                    longitude = currentline.replace(Regex("[, a-żA-Ż]+"), " ").split(" ")[1].toDouble()
+                    latitude = currentline.replace(Regex("[, a-żA-Ż]+"), " ").split(" ")[2].toDouble()
 
                     break
                 }

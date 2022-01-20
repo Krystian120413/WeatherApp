@@ -12,6 +12,7 @@ import android.widget.*
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Geocoder
+import android.media.MediaPlayer
 import android.os.*
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -35,6 +36,8 @@ class MainActivity : AppCompatActivity(),
     var city: String = ""
     var weatherApi: String = ""
     var aqiApi: String = ""
+    var changed = false
+    var mMediaPlayer: MediaPlayer? = null
 
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
@@ -42,8 +45,8 @@ class MainActivity : AppCompatActivity(),
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-
         if(intent.getDoubleExtra("Longitude", -9999.0) != -9999.0) {
+            changed = true
             longitude = intent.getDoubleExtra("Longitude", 0.0)
             latitude = intent.getDoubleExtra("Latitude", 0.0)
             weatherApi = "https://api.openweathermap.org/data/2.5/weather?lat=$latitude&lon=$longitude&appid=$api&units=metric"
@@ -51,6 +54,7 @@ class MainActivity : AppCompatActivity(),
             WeatherTask().execute()
         }
         else {
+            changed = false
             if (getPermissions() && isInternetAvailable()) {
                 fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
                 getLocation()
@@ -74,12 +78,19 @@ class MainActivity : AppCompatActivity(),
         }
 
         findViewById<ImageButton>(R.id.settingBtn).setOnClickListener{
+            stopMusic()
+            if (changed) finish()
             val intentSetting = Intent(this, SettingsActivity::class.java)
             intentSetting.putExtra("Address", findViewById<TextView>(R.id.address).text)
             intentSetting.putExtra("Longitude", longitude)
             intentSetting.putExtra("Latitude", latitude)
             startActivity(intentSetting)
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        stopMusic()
     }
 
     private fun openDialog() {
@@ -269,6 +280,8 @@ class MainActivity : AppCompatActivity(),
                 findViewById<TextView>(R.id.pressure).text = pressure
                 findViewById<TextView>(R.id.humidity).text = humidity
 
+                playMusic(weatherDescription)
+
                 findViewById<ProgressBar>(R.id.loader).visibility = View.GONE
                 findViewById<RelativeLayout>(R.id.mainContainer).visibility = View.VISIBLE
                 airQuality(aqiLevel.toInt())
@@ -301,6 +314,42 @@ class MainActivity : AppCompatActivity(),
             !ipAddr.equals("")
         } catch (e: java.lang.Exception) {
             false
+        }
+    }
+
+    fun playMusic(weather : String){
+        if(weather == "clear sky"){
+            mMediaPlayer = MediaPlayer.create(this, R.raw.sunny_day)
+            mMediaPlayer!!.isLooping = false
+            mMediaPlayer!!.start()
+        }
+        else if (weather.contains("rain") || weather.contains("drizzle")){
+            mMediaPlayer = MediaPlayer.create(this, R.raw.rainy_day)
+            mMediaPlayer!!.isLooping = false
+            mMediaPlayer!!.start()
+        }
+        else if (weather.contains("snow")){
+            mMediaPlayer = MediaPlayer.create(this, R.raw.snow)
+            mMediaPlayer!!.isLooping = false
+            mMediaPlayer!!.start()
+        }
+        else if (weather.contains("wind")){
+            mMediaPlayer = MediaPlayer.create(this, R.raw.wind)
+            mMediaPlayer!!.isLooping = false
+            mMediaPlayer!!.start()
+        }
+        else if (weather.contains("thunderstorm")){
+            mMediaPlayer = MediaPlayer.create(this, R.raw.thunderstorm)
+            mMediaPlayer!!.isLooping = false
+            mMediaPlayer!!.start()
+        }
+    }
+
+    private fun stopMusic(){
+        if(mMediaPlayer != null){
+            mMediaPlayer!!.stop()
+            mMediaPlayer!!.release()
+            mMediaPlayer = null
         }
     }
 }

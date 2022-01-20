@@ -25,7 +25,7 @@ class SendNotification(private val context: Context) {
         }
 
         val builder = NotificationCompat.Builder(context, CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_launcher_background)
+            .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentTitle("My notification")
             .setAutoCancel(true)
             .setContentText("Much longer text that cannot fit one line...")
@@ -37,4 +37,3 @@ class SendNotification(private val context: Context) {
         NotificationManagerCompat.from(context).notify(CHANNEL_ID.toInt(), builder.build())
     }
 }
-
