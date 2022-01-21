@@ -37,6 +37,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
                     android:layout_weight="1"
+                    android:gravity="center"
                     android:minWidth="70sp"
                     android:text="pon 21.05"
                     android:textSize="16sp" />
@@ -52,6 +53,7 @@
                         android:layout_width="118dp"
                         android:layout_height="40dp"
                         android:layout_weight="1"
+                        android:gravity="center"
                         android:paddingTop="10sp"
                         android:text="@string/temp"
                         android:textSize="40sp" />
@@ -61,6 +63,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:gravity="center"
                         android:text="TextView" />
                 </LinearLayout>
 
@@ -85,8 +88,9 @@
                         android:id="@+id/wind1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/wind"
+                        android:gravity="center"
                         android:minWidth="70sp"
+                        android:text="@string/wind"
                         android:textColor="#FFFFFF"
                         android:textSize="14sp" />
                 </LinearLayout>
@@ -113,6 +117,7 @@
                         android:id="@+id/humidity1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:gravity="center"
                         android:text="@string/humidity"
                         android:textColor="#FFFFFF"
                         android:textSize="14sp" />
@@ -135,8 +140,9 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
                     android:layout_weight="1"
-                    android:text="wt 21.05"
+                    android:gravity="center"
                     android:minWidth="70sp"
+                    android:text="wt 21.05"
                     android:textSize="16sp" />
 
                 <LinearLayout
@@ -150,6 +156,7 @@
                         android:layout_width="118dp"
                         android:layout_height="40dp"
                         android:layout_weight="1"
+                        android:gravity="center"
                         android:paddingTop="10sp"
                         android:text="@string/temp"
                         android:textSize="40sp" />
@@ -159,6 +166,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:gravity="center"
                         android:text="TextView" />
                 </LinearLayout>
 
@@ -183,6 +191,7 @@
                         android:id="@+id/wind2"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:gravity="center"
                         android:minWidth="80sp"
                         android:text="@string/wind"
                         android:textColor="#FFFFFF"
@@ -211,6 +220,7 @@
                         android:id="@+id/humidity2"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:gravity="center"
                         android:text="@string/humidity"
                         android:textColor="#FFFFFF"
                         android:textSize="14sp" />
@@ -233,8 +243,9 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
                     android:layout_weight="1"
-                    android:text="pon 21.05"
+                    android:gravity="center"
                     android:minWidth="70sp"
+                    android:text="pon 21.05"
                     android:textSize="16sp" />
 
                 <LinearLayout
@@ -248,6 +259,7 @@
                         android:layout_width="118dp"
                         android:layout_height="40dp"
                         android:layout_weight="1"
+                        android:gravity="center"
                         android:paddingTop="10sp"
                         android:text="@string/temp"
                         android:textSize="40sp" />
@@ -257,6 +269,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:gravity="center"
                         android:text="TextView" />
                 </LinearLayout>
 
@@ -281,8 +294,9 @@
                         android:id="@+id/wind3"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/wind"
+                        android:gravity="center"
                         android:minWidth="70sp"
+                        android:text="@string/wind"
                         android:textColor="#FFFFFF"
                         android:textSize="14sp" />
                 </LinearLayout>
@@ -309,6 +323,7 @@
                         android:id="@+id/humidity3"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:gravity="center"
                         android:text="@string/humidity"
                         android:textColor="#FFFFFF"
                         android:textSize="14sp" />
@@ -331,8 +346,9 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
                     android:layout_weight="1"
-                    android:text="pon 21.05"
+                    android:gravity="center"
                     android:minWidth="70sp"
+                    android:text="pon 21.05"
                     android:textSize="16sp" />
 
                 <LinearLayout
@@ -346,6 +362,7 @@
                         android:layout_width="118dp"
                         android:layout_height="40dp"
                         android:layout_weight="1"
+                        android:gravity="center"
                         android:paddingTop="10sp"
                         android:text="@string/temp"
                         android:textSize="40sp" />
@@ -355,6 +372,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:gravity="center"
                         android:text="TextView" />
                 </LinearLayout>
 
@@ -380,8 +398,9 @@
                         android:id="@+id/wind4"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/wind"
+                        android:gravity="center"
                         android:minWidth="70sp"
+                        android:text="@string/wind"
                         android:textColor="#FFFFFF"
                         android:textSize="14sp" />
                 </LinearLayout>
@@ -408,6 +427,7 @@
                         android:id="@+id/humidity4"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:gravity="center"
                         android:text="@string/humidity"
                         android:textColor="#FFFFFF"
                         android:textSize="14sp" />

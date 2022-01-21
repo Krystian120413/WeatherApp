@@ -52,7 +52,7 @@ class MainActivity : AppCompatActivity(),
             latitude = intent.getDoubleExtra("Latitude", 0.0)
             weatherApi = "https://api.openweathermap.org/data/2.5/weather?lat=$latitude&lon=$longitude&appid=$api&units=metric"
             aqiApi = "https://api.waqi.info/feed/geo:$latitude;$longitude/?token=$aqiToken"
-            getLocation()
+            WeatherTask().execute()
         }
         else {
             changed = false
@@ -231,23 +231,18 @@ class MainActivity : AppCompatActivity(),
         }
 
         override fun doInBackground(vararg params: String?): String? {
-            return if (isInternetAvailable()) {
-                val response: String? = try {
-                    URL(weatherApi).readText(Charsets.UTF_8)
-                } catch (e: Exception) {
-                    null
-                }
-                aqi = URL(aqiApi).readText(Charsets.UTF_8)
-                response
-            } else {
+            val response: String? = try {
+                URL(weatherApi).readText(Charsets.UTF_8)
+            } catch (e: Exception) {
                 null
             }
+            aqi = URL(aqiApi).readText(Charsets.UTF_8)
+            return response
         }
 
         @SuppressLint("SimpleDateFormat")
         override fun onPostExecute(result: String) {
             super.onPostExecute(result)
-            if (result != null) {
                 try {
                     val jsonObj = JSONObject(result)
                     var aqiLevel = "0"
@@ -304,7 +299,6 @@ class MainActivity : AppCompatActivity(),
                         .show()
                     finish()
                     startActivity(intent)
-                }
             }
         }
 
