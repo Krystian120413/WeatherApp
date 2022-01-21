@@ -16,6 +16,7 @@ class UpdateDelayed public constructor(activity : MainActivity) : Runnable{
     }
 
     fun update() {
+        SendNotification(mActivity).createNotificationChannel()
         mActivity.WeatherTask().execute()
     }
 }
