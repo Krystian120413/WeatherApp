@@ -2,6 +2,7 @@ package com.project.weatheraplication
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Context
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import org.json.JSONObject
@@ -21,10 +22,9 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.tasks.CancellationTokenSource
 import okhttp3.*
 import java.io.*
-import java.net.InetAddress
 import java.util.concurrent.TimeUnit
 import com.project.weatheraplication.LocationDialog as dialog
-
+import android.net.ConnectivityManager
 
 class MainActivity : AppCompatActivity(),
     com.project.weatheraplication.LocationDialog.LocationDialogListener {
@@ -39,7 +39,6 @@ class MainActivity : AppCompatActivity(),
     var aqiApi: String = ""
     var changed = false
     var mMediaPlayer: MediaPlayer? = null
-    var temp = 12
 
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
@@ -63,7 +62,8 @@ class MainActivity : AppCompatActivity(),
             } else if (isInternetAvailable()) {
                 openDialog()
             } else {
-                println("niemaneta")
+                Toast.makeText(this, "Connect to internet and try again!", Toast.LENGTH_LONG).show()
+                this.finishAffinity()
             }
         }
 
@@ -88,7 +88,6 @@ class MainActivity : AppCompatActivity(),
             intentSetting.putExtra("Latitude", latitude)
             startActivity(intentSetting)
         }
-        //UpdateDelayed(this).myHandler.postDelayed(UpdateDelayed(this), 10000)
     }
 
     override fun onStop() {
@@ -244,63 +243,63 @@ class MainActivity : AppCompatActivity(),
         @SuppressLint("SimpleDateFormat")
         override fun onPostExecute(result: String) {
             super.onPostExecute(result)
-            try {
-                val jsonObj = JSONObject(result)
-                var aqiLevel = "0"
-                if (aqi != "") {
-                    aqiLevel = JSONObject(aqi).getJSONObject("data").getString("aqi")
-                }
-                val main = jsonObj.getJSONObject("main")
-                val sys = jsonObj.getJSONObject("sys")
-                val wind = jsonObj.getJSONObject("wind")
-                val weather = jsonObj.getJSONArray("weather").getJSONObject(0)
+                try {
+                    val jsonObj = JSONObject(result)
+                    var aqiLevel = "0"
+                    if (aqi != "") {
+                        aqiLevel = JSONObject(aqi).getJSONObject("data").getString("aqi")
+                    }
+                    val main = jsonObj.getJSONObject("main")
+                    val sys = jsonObj.getJSONObject("sys")
+                    val wind = jsonObj.getJSONObject("wind")
+                    val weather = jsonObj.getJSONArray("weather").getJSONObject(0)
 
-                val updatedAt:Long = jsonObj.getLong("dt")
-                val updatedAtText = "Updated at: "+ SimpleDateFormat("dd/MM/yyyy kk:mm").format(Date(updatedAt*1000))
-                temp = main.getInt("temp")
-                val tempS = "$temp°C"
-                val tempMin = "Min Temp: " + main.getInt("temp_min")+"°C"
-                val tempMax = "Max Temp: " + main.getInt("temp_max")+"°C"
-                val pressure = main.getString("pressure") + " hPa"
-                val humidity = main.getString("humidity") + "%"
+                    val updatedAt: Long = jsonObj.getLong("dt")
+                    val updatedAtText =
+                        "Updated at: " + SimpleDateFormat("dd/MM/yyyy kk:mm").format(Date(updatedAt * 1000))
+                    val temp = main.getInt("temp").toString() + "°C"
+                    val tempMin = "Min Temp: " + main.getInt("temp_min") + "°C"
+                    val tempMax = "Max Temp: " + main.getInt("temp_max") + "°C"
+                    val pressure = main.getString("pressure") + " hPa"
+                    val humidity = main.getString("humidity") + "%"
 
-                val timezone = jsonObj.getLong("timezone")
-                val sunrise: Long = (sys.getLong("sunrise")+timezone)*1000
-                val sunset: Long = (sys.getLong("sunset")+timezone)*1000
-                val windSpeed = (wind.getDouble("speed")*3.6).toInt().toString() + " km/h"
-                val weatherDescription = weather.getString("description")
+                    val timezone = jsonObj.getLong("timezone")
+                    val sunrise: Long = (sys.getLong("sunrise") + timezone) * 1000
+                    val sunset: Long = (sys.getLong("sunset") + timezone) * 1000
+                    val windSpeed = (wind.getDouble("speed") * 3.6).toInt().toString() + " km/h"
+                    val weatherDescription = weather.getString("description")
 
-                val address = jsonObj.getString("name")+", "+sys.getString("country")
+                    val address = jsonObj.getString("name") + ", " + sys.getString("country")
 
-                findViewById<TextView>(R.id.address).text = address
-                findViewById<TextView>(R.id.updated_at).text =  updatedAtText
-                findViewById<TextView>(R.id.status).text = weatherDescription.replaceFirstChar {
-                    if (it.isLowerCase()) it.titlecase(
-                        Locale.getDefault()
-                    ) else it.toString()
-                }
-                val simple: SimpleDateFormat = SimpleDateFormat("kk:mm")
-                simple.timeZone = TimeZone.getTimeZone("UTC")
-                findViewById<TextView>(R.id.temp).text = tempS
-                findViewById<TextView>(R.id.temp_min).text = tempMin
-                findViewById<TextView>(R.id.temp_max).text = tempMax
-                findViewById<TextView>(R.id.sunrise).text = simple.format(Date(sunrise))
-                findViewById<TextView>(R.id.sunset).text = simple.format(Date(sunset))
-                findViewById<TextView>(R.id.wind).text = windSpeed
-                findViewById<TextView>(R.id.pressure).text = pressure
-                findViewById<TextView>(R.id.humidity).text = humidity
+                    findViewById<TextView>(R.id.address).text = address
+                    findViewById<TextView>(R.id.updated_at).text = updatedAtText
+                    findViewById<TextView>(R.id.status).text = weatherDescription.replaceFirstChar {
+                        if (it.isLowerCase()) it.titlecase(
+                            Locale.getDefault()
+                        ) else it.toString()
+                    }
+                    val simple: SimpleDateFormat = SimpleDateFormat("kk:mm")
+                    simple.timeZone = TimeZone.getTimeZone("UTC")
+                    findViewById<TextView>(R.id.temp).text = temp
+                    findViewById<TextView>(R.id.temp_min).text = tempMin
+                    findViewById<TextView>(R.id.temp_max).text = tempMax
+                    findViewById<TextView>(R.id.sunrise).text = simple.format(Date(sunrise))
+                    findViewById<TextView>(R.id.sunset).text = simple.format(Date(sunset))
+                    findViewById<TextView>(R.id.wind).text = windSpeed
+                    findViewById<TextView>(R.id.pressure).text = pressure
+                    findViewById<TextView>(R.id.humidity).text = humidity
 
-                playMusic(weatherDescription)
+                    playMusic(weatherDescription)
 
-                findViewById<ProgressBar>(R.id.loader).visibility = View.GONE
-                findViewById<RelativeLayout>(R.id.mainContainer).visibility = View.VISIBLE
-                airQuality(aqiLevel.toInt())
-            } catch (e: Exception) {
-                Toast.makeText(applicationContext, "Something went wrong!", Toast.LENGTH_SHORT).show()
-                finish()
-                startActivity(intent)
+                    findViewById<ProgressBar>(R.id.loader).visibility = View.GONE
+                    findViewById<RelativeLayout>(R.id.mainContainer).visibility = View.VISIBLE
+                    airQuality(aqiLevel.toInt())
+                } catch (e: Exception) {
+                    Toast.makeText(applicationContext, "Something went wrong!", Toast.LENGTH_SHORT)
+                        .show()
+                    finish()
+                    startActivity(intent)
             }
-
         }
 
         @SuppressLint("SetTextI18n", "ResourceAsColor")
@@ -319,13 +318,11 @@ class MainActivity : AppCompatActivity(),
     }
 
     private fun isInternetAvailable(): Boolean {
-        return try {
-            val ipAddr: InetAddress = InetAddress.getByName("8.8.8.8")
-            !ipAddr.equals("")
-        } catch (e: java.lang.Exception) {
-            false
-        }
+        val cm = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val netInfo = cm.activeNetworkInfo
+        return netInfo != null && netInfo.isConnectedOrConnecting
     }
+
 
     fun playMusic(weather : String){
         if(weather == "clear sky"){
