@@ -22,6 +22,7 @@ import com.google.android.gms.tasks.CancellationTokenSource
 import okhttp3.*
 import java.io.*
 import java.net.InetAddress
+import java.util.concurrent.TimeUnit
 import com.project.weatheraplication.LocationDialog as dialog
 
 
@@ -86,11 +87,18 @@ class MainActivity : AppCompatActivity(),
             intentSetting.putExtra("Latitude", latitude)
             startActivity(intentSetting)
         }
+
+    }
+
+    override fun onStop() {
+        stopMusic()
+        UpdateDelayed(this).myHandler.postDelayed(UpdateDelayed(this), TimeUnit.HOURS.toMillis(2))
+        super.onStop()
     }
 
     override fun onDestroy() {
-        super.onDestroy()
         stopMusic()
+        super.onDestroy()
     }
 
     private fun openDialog() {

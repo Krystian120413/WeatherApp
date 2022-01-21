@@ -46,6 +46,7 @@ class SettingsActivity : AppCompatActivity(), LocationDialog.LocationDialogListe
         findViewById<Button>(R.id.addLocation).setOnClickListener {
             addLocationButton()
         }
+
         findViewById<Button>(R.id.saveLocation).setOnClickListener {
             val lon = longitude.toString()
             val lat = latitude.toString()
