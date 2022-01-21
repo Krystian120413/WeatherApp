@@ -4,32 +4,28 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Looper
 import android.util.TypedValue
-import android.view.Gravity
-import android.view.Gravity.*
+import android.view.Gravity.CENTER
 import android.view.View
 import android.view.View.TEXT_ALIGNMENT_CENTER
 import android.view.ViewGroup
-import android.view.ViewGroup.LayoutParams.*
+import android.view.ViewGroup.LayoutParams.MATCH_PARENT
+import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.*
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.setMargins
 import androidx.core.view.setPadding
-import java.io.*
-import androidx.core.graphics.drawable.DrawableCompat
-import androidx.core.util.rangeTo
-import androidx.core.view.ViewCompat.setBackgroundTintList
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import okhttp3.*
 import org.json.JSONException
 import org.json.JSONObject
-import kotlin.properties.Delegates
+import java.io.*
 
 private var cities: List<String> = listOf<String>()
 
-class SettingsActivity : AppCompatActivity(), LocationDialog.LocationDialogListener, View.OnClickListener {
+class SettingsActivity : AppCompatActivity(), LocationDialog.LocationDialogListener,
+    View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
@@ -43,16 +39,14 @@ class SettingsActivity : AppCompatActivity(), LocationDialog.LocationDialogListe
 
         findViewById<TextView>(R.id.currentLocation).text = address
 
-        findViewById<FloatingActionButton>(R.id.resetLocation).setOnClickListener{
+        findViewById<FloatingActionButton>(R.id.resetLocation).setOnClickListener {
             finish()
-            val main = Intent(this, MainActivity::class.java)
-            startActivity(main)
         }
 
-        findViewById<Button>(R.id.addLocation).setOnClickListener{
+        findViewById<Button>(R.id.addLocation).setOnClickListener {
             addLocationButton()
         }
-        findViewById<Button>(R.id.saveLocation).setOnClickListener{
+        findViewById<Button>(R.id.saveLocation).setOnClickListener {
             val lon = longitude.toString()
             val lat = latitude.toString()
 
@@ -228,7 +222,7 @@ class SettingsActivity : AppCompatActivity(), LocationDialog.LocationDialogListe
         val writer = BufferedWriter(OutputStreamWriter(fos))
 
         for (i in cities) {
-            if(i.isNotEmpty() && i.isNotBlank()) {
+            if (i.isNotEmpty() && i.isNotBlank()) {
                 writer.appendLine(i)
                 writer.flush()
             }
@@ -247,7 +241,7 @@ class SettingsActivity : AppCompatActivity(), LocationDialog.LocationDialogListe
             fIn.close()
             isr.close()
 
-            if(cities[0].isNullOrBlank()) emptyList()
+            if (cities[0].isNullOrBlank()) emptyList()
             else cities
         } catch (e: FileNotFoundException) {
             val fOut: FileOutputStream = openFileOutput(
@@ -259,13 +253,13 @@ class SettingsActivity : AppCompatActivity(), LocationDialog.LocationDialogListe
         }
     }
 
-    fun message(e : String) {
+    fun message(e: String) {
         this.runOnUiThread {
             Toast.makeText(applicationContext, e, Toast.LENGTH_SHORT).show()
         }
     }
 
-    private fun getCity(city : String, client : OkHttpClient) {
+    private fun getCity(city: String, client: OkHttpClient) {
         val zip = city.replace(Regex("[, ]+"), ",").split(',')
         val api = "79aaa968a0069d0b93d757ed27fea018"
         val url = if (city.contains(','))
@@ -281,6 +275,7 @@ class SettingsActivity : AppCompatActivity(), LocationDialog.LocationDialogListe
             override fun onFailure(call: Call, e: IOException) {
                 message("HTTP Request Error")
             }
+
             override fun onResponse(call: Call, response: Response) {
                 val jobj = JSONObject(response.body()!!.string())
                 try {
@@ -299,20 +294,21 @@ class SettingsActivity : AppCompatActivity(), LocationDialog.LocationDialogListe
     }
 
     override fun onClick(v: View?) {
-        if(v?.tag.toString().startsWith('r')) {
+        if (v?.tag.toString().startsWith('r')) {
             val view = v?.parent?.parent as ViewGroup
             view.removeView(view)
             view.removeAllViews()
-            deleteLocation(v?.tag.toString().last())
+            deleteLocation(v.tag.toString().last())
         }
-        if(v?.tag.toString().startsWith('c')) {
+        if (v?.tag.toString().startsWith('c')) {
             changeLocation(v?.tag.toString().last())
         }
     }
 
-    private fun changeLocation(n : Char) {
+    private fun changeLocation(n: Char) {
         try {
-            val fIn = BufferedReader(FileReader("/data/data/com.project.weatheraplication/files/savedLocations.txt"))
+            val fIn =
+                BufferedReader(FileReader("/data/data/com.project.weatheraplication/files/savedLocations.txt"))
             var longitude = 0.0
             var latitude = 0.0
 
@@ -322,8 +318,10 @@ class SettingsActivity : AppCompatActivity(), LocationDialog.LocationDialogListe
 
             while (currentline != null) {
                 if (nlines == n.digitToInt()) {
-                    longitude = currentline.replace(Regex("[, a-żA-Ż]+"), " ").split(" ")[1].toDouble()
-                    latitude = currentline.replace(Regex("[, a-żA-Ż]+"), " ").split(" ")[2].toDouble()
+                    longitude =
+                        currentline.replace(Regex("[, a-żA-Ż]+"), " ").split(" ")[1].toDouble()
+                    latitude =
+                        currentline.replace(Regex("[, a-żA-Ż]+"), " ").split(" ")[2].toDouble()
 
                     break
                 }
@@ -343,7 +341,7 @@ class SettingsActivity : AppCompatActivity(), LocationDialog.LocationDialogListe
         }
     }
 
-    private fun deleteLocation(n : Char) {
+    private fun deleteLocation(n: Char) {
         try {
             val fOut = File("/data/data/com.project.weatheraplication/files/temp.txt")
             val fOutWriter = BufferedWriter(FileWriter(fOut))
