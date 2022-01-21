@@ -1,5 +1,6 @@
 package com.project.weatheraplication
 
+import android.widget.TextView
 import java.util.concurrent.TimeUnit
 
 class UpdateDelayed public constructor(activity : MainActivity) : Runnable{
@@ -18,5 +19,7 @@ class UpdateDelayed public constructor(activity : MainActivity) : Runnable{
     fun update() {
         SendNotification(mActivity).createNotificationChannel()
         mActivity.WeatherTask().execute()
+        SendNotification(mActivity, mActivity.temp).createNotificationChannel()
     }
+
 }
