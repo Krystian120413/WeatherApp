@@ -90,7 +90,8 @@ class MainActivity : AppCompatActivity(),
             startActivity(intentSetting)
         }
 
-        UpdateDelayed(this).myHandler.postDelayed(UpdateDelayed(this), 1000)
+        //line to test notification
+        //UpdateDelayed(this).myHandler.postDelayed(UpdateDelayed(this), 10000)
     }
 
     override fun onStop() {
