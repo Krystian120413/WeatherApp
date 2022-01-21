@@ -39,6 +39,7 @@ class MainActivity : AppCompatActivity(),
     var aqiApi: String = ""
     var changed = false
     var mMediaPlayer: MediaPlayer? = null
+    var temp = 0
 
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
@@ -88,6 +89,8 @@ class MainActivity : AppCompatActivity(),
             intentSetting.putExtra("Latitude", latitude)
             startActivity(intentSetting)
         }
+
+        UpdateDelayed(this).myHandler.postDelayed(UpdateDelayed(this), 1000)
     }
 
     override fun onStop() {
@@ -257,7 +260,8 @@ class MainActivity : AppCompatActivity(),
                     val updatedAt: Long = jsonObj.getLong("dt")
                     val updatedAtText =
                         "Updated at: " + SimpleDateFormat("dd/MM/yyyy kk:mm").format(Date(updatedAt * 1000))
-                    val temp = main.getInt("temp").toString() + "°C"
+                    temp = main.getInt("temp")
+                    val tempS = "$temp°C"
                     val tempMin = "Min Temp: " + main.getInt("temp_min") + "°C"
                     val tempMax = "Max Temp: " + main.getInt("temp_max") + "°C"
                     val pressure = main.getString("pressure") + " hPa"
@@ -280,7 +284,7 @@ class MainActivity : AppCompatActivity(),
                     }
                     val simple: SimpleDateFormat = SimpleDateFormat("kk:mm")
                     simple.timeZone = TimeZone.getTimeZone("UTC")
-                    findViewById<TextView>(R.id.temp).text = temp
+                    findViewById<TextView>(R.id.temp).text = tempS
                     findViewById<TextView>(R.id.temp_min).text = tempMin
                     findViewById<TextView>(R.id.temp_max).text = tempMax
                     findViewById<TextView>(R.id.sunrise).text = simple.format(Date(sunrise))

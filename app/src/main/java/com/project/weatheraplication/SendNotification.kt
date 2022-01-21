@@ -10,7 +10,7 @@ import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 
-class SendNotification(private val context: Context, val temperature: Int) {
+class SendNotification(private val context: Context, private val temperature: Int) {
     private var CHANNEL_ID = "10"
     private var CHANNEL_ID_INT = CHANNEL_ID.toInt()
 
